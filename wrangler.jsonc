@@ -13,7 +13,7 @@
   // CHANGE_ME — the Worker script name. This is the identity Cloudflare
   // stores secrets, routes and deployments against, so renaming it later
   // creates a *new* worker and orphans the old one's secrets.
-  "name": "frug-app",
+  "name": "alex-website",
 
   "compatibility_date": "2025-01-01",
   "main": "worker/index.ts",
@@ -52,7 +52,7 @@
   // a custom_domain on a zone in the same account resolves without it.
   "routes": [
     {
-      "pattern": "change-me.example.com",
+      "pattern": "alex.stanbrook.me",
       "custom_domain": true,
     },
   ],
@@ -62,8 +62,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "change-me-db",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_name": "alex-website-db",
+      "database_id": "1c77d1e3-834f-487a-8369-2cbc4adee9cb",
       "migrations_dir": "drizzle",
     },
   ],
@@ -72,7 +72,7 @@
   "kv_namespaces": [
     {
       "binding": "KV",
-      "id": "00000000000000000000000000000000",
+      "id": "66ab5bda6f324ed7b0a8f7b750cddac4",
     },
   ],
 
@@ -143,7 +143,7 @@
     // normally with this exact email and that account becomes an admin — but
     // ONLY while no admin exists yet, so it disarms itself the moment it
     // works. Safe to leave set; tidier to clear afterwards.
-    "BOOTSTRAP_ADMIN_EMAIL": "",
+    "BOOTSTRAP_ADMIN_EMAIL": "alex@stanbrook.me",
 
     // --- ROLES & PERMISSIONS ---
     // CHANGE_ME — model your own resources here. Convention:
@@ -165,8 +165,8 @@
     // with no useful error. RP_ID is the bare hostname (no scheme, no
     // port); ORIGIN is the full origin users load the site from.
     "RP_NAME": "Study Hub",
-    "RP_ID": "change-me.example.com",
-    "ORIGIN": "https://change-me.example.com",
+    "RP_ID": "alex.stanbrook.me",
+    "ORIGIN": "https://alex.stanbrook.me",
 
     // --- PASSWORD CONFIG ---
     // These are enforced on registration, password change and reset. They used
