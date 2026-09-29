@@ -1,3 +1,17 @@
+# Study Hub — alex.stanbrook.me
+
+Alex's personal university study hub: semesters and subjects, assignments and
+exams, a weekly planner, notes, saved links, flashcards and grades. Only the
+owner signs in (at `/admin/login`); visitors see just the notes, links and
+flashcard sets marked public, under `/public`.
+
+- Design notes: [docs/design.md](docs/design.md)
+- Deploying and first sign-in: [docs/deploy.md](docs/deploy.md)
+
+Built on frug-template; the rest of this README describes that template.
+
+---
+
 # frug-template
 
 A production-shaped starter for Cloudflare Workers websites: Hono on the edge,
