@@ -16,7 +16,10 @@ export const seoRoute = new Hono<AppEnv>();
  * query it in the handler below and concatenate. Keep the list under ~50,000
  * URLs; past that, sitemaps have to be split and indexed.
  */
-const STATIC_ROUTES: SitemapEntry[] = [{ loc: "/", changefreq: "weekly", priority: 1.0 }];
+const STATIC_ROUTES: SitemapEntry[] = [
+  { loc: "/", changefreq: "weekly", priority: 1.0 },
+  { loc: "/public", changefreq: "weekly", priority: 0.8 },
+];
 
 seoRoute.get("/robots.txt", (c) =>
   c.text(robotsTxt(c.var.app, c.env.ENVIRONMENT), 200, {

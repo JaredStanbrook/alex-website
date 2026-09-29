@@ -8,7 +8,14 @@ import { Hono } from "hono";
 import { drizzle } from "drizzle-orm/d1";
 import { users, credentials, verificationCodes, authLogs } from "../schema/auth.schema";
 import { userRoles, rolePermissions, userPermissions } from "../schema/roles.schema";
+import { semester } from "../schema/semester.schema";
+import { subject } from "../schema/subject.schema";
+import { assignment, exam } from "../schema/assessment.schema";
 import { note } from "../schema/note.schema";
+import { resource } from "../schema/resource.schema";
+import { studySession } from "../schema/study-session.schema";
+import { flashcardSet, flashcard } from "../schema/flashcard.schema";
+import { contentLink } from "../schema/content-link.schema";
 import { requireRole } from "../middleware/guard.middleware";
 import { AppEnv } from "@server/types";
 
@@ -48,7 +55,16 @@ devRouter.get("/", async (c) => {
     fetchTableData(db, userPermissions, "user_permissions"),
 
     // Feature tables — add yours here.
+    fetchTableData(db, semester, "semester"),
+    fetchTableData(db, subject, "subject"),
+    fetchTableData(db, assignment, "assignment"),
+    fetchTableData(db, exam, "exam"),
     fetchTableData(db, note, "note"),
+    fetchTableData(db, resource, "resource"),
+    fetchTableData(db, studySession, "study_session"),
+    fetchTableData(db, flashcardSet, "flashcard_set"),
+    fetchTableData(db, flashcard, "flashcard"),
+    fetchTableData(db, contentLink, "content_link"),
   ]);
 
   // Build HTML response
@@ -350,7 +366,16 @@ devRouter.get("/json", async (c) => {
     fetchTableData(db, userRoles, "user_roles"),
     fetchTableData(db, rolePermissions, "role_permissions"),
     fetchTableData(db, userPermissions, "user_permissions"),
+    fetchTableData(db, semester, "semester"),
+    fetchTableData(db, subject, "subject"),
+    fetchTableData(db, assignment, "assignment"),
+    fetchTableData(db, exam, "exam"),
     fetchTableData(db, note, "note"),
+    fetchTableData(db, resource, "resource"),
+    fetchTableData(db, studySession, "study_session"),
+    fetchTableData(db, flashcardSet, "flashcard_set"),
+    fetchTableData(db, flashcard, "flashcard"),
+    fetchTableData(db, contentLink, "content_link"),
   ]);
 
   return c.json({

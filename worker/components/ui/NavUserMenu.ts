@@ -48,7 +48,7 @@ export class NavUserMenu extends LitElement {
 
       if (response.ok) {
         localStorage.removeItem("selectedProperty");
-        redirectWithToast("/login", "Logged out successfully", "", "success");
+        redirectWithToast("/admin/login", "Logged out successfully", "", "success");
       } else {
         throw new Error("Logout failed");
       }

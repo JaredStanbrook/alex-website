@@ -10,13 +10,13 @@ export const requireUser = createMiddleware<AppEnv>(async (c, next) => {
     // 1. If it's an HTMX request, we might want to trigger a client-side redirect
     if (c.req.header("HX-Request")) {
       flashToast(c, "Please sign in to continue", { type: "warning" });
-      htmxRedirect(c, "/login");
+      htmxRedirect(c, "/admin/login");
       return c.text("Redirecting...", 401);
     }
 
     // 2. Standard browser request -> Redirect to login
     flashToast(c, "Please sign in to continue", { type: "warning" });
-    return c.redirect("/login");
+    return c.redirect("/admin/login");
   }
 
   await next();
@@ -32,11 +32,11 @@ export const requireRole = (...allowedRoles: string[]) =>
     if (!user) {
       if (c.req.header("HX-Request")) {
         flashToast(c, "Please sign in to continue", { type: "warning" });
-        htmxRedirect(c, "/login");
+        htmxRedirect(c, "/admin/login");
         return c.text("Redirecting...", 401);
       }
       flashToast(c, "Please sign in to continue", { type: "warning" });
-      return c.redirect("/login");
+      return c.redirect("/admin/login");
     }
 
     // 2. Authorization Check (Role)
@@ -52,13 +52,13 @@ export const requireRole = (...allowedRoles: string[]) =>
         flashToast(c, "You do not have permission to access this page", {
           type: "error",
         });
-        htmxRedirect(c, "/login");
+        htmxRedirect(c, "/admin/login");
         return c.text("Redirecting...", 403);
       }
       flashToast(c, "You do not have permission to access this page", {
         type: "error",
       });
-      return c.redirect("/login");
+      return c.redirect("/admin/login");
     }
 
     await next();
@@ -77,11 +77,11 @@ export const requirePermission = (requiredPermission: string) =>
     if (!user) {
       if (c.req.header("HX-Request")) {
         flashToast(c, "Please sign in to continue", { type: "warning" });
-        htmxRedirect(c, "/login");
+        htmxRedirect(c, "/admin/login");
         return c.text("Redirecting...", 401);
       }
       flashToast(c, "Please sign in to continue", { type: "warning" });
-      return c.redirect("/login");
+      return c.redirect("/admin/login");
     }
 
     // 2. Authorization Check (Permission)
@@ -91,13 +91,13 @@ export const requirePermission = (requiredPermission: string) =>
         flashToast(c, "You do not have permission to access this page", {
           type: "error",
         });
-        htmxRedirect(c, "/login");
+        htmxRedirect(c, "/admin/login");
         return c.text("Redirecting...", 403);
       }
       flashToast(c, "You do not have permission to access this page", {
         type: "error",
       });
-      return c.redirect("/login");
+      return c.redirect("/admin/login");
     }
 
     await next();

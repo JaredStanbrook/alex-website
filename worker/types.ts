@@ -17,6 +17,8 @@ export type Vars = {
   APP_TAGLINE: string;
   APP_LOCALE: string;
   APP_CURRENCY: string;
+  /** IANA zone that decides what "today" means, e.g. "Australia/Perth". */
+  APP_TIMEZONE: string;
   ORIGIN: string;
   /** A Wrangler secret, never a var. Signs the session JWT. */
   JWT_SECRET: string;
@@ -34,6 +36,8 @@ export type Vars = {
    * `Auth.resolveBootstrapRole`.
    */
   BOOTSTRAP_ADMIN_EMAIL: string;
+  /** "true" closes sign-up for good once the owner's account exists. */
+  SINGLE_ACCOUNT: string;
 };
 
 /**
@@ -52,8 +56,6 @@ export type Bindings = Vars & {
   DB: D1Database;
   /** Static client bundle produced by `vite build --mode client`. */
   ASSETS: Fetcher;
-  /** Optional file storage. Remove here and in wrangler.jsonc if unused. */
-  R2: R2Bucket;
   /** Per-IP throttle on the auth API. See worker/routes/api/auth.ts. */
   RATE_LIMITER: RateLimiter;
 };

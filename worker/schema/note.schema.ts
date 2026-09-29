@@ -1,32 +1,23 @@
 // worker/schema/note.schema.ts
 //
-// ---------------------------------------------------------------------------
-// EXAMPLE FEATURE — delete this file (and routes/notes.tsx, views/notes/) once
-// you have a real domain. It exists to show the shape every feature follows:
-//
-//   1. A Drizzle table, owned by a user via `ownershipColumns`.
-//   2. Zod schemas derived from that table with drizzle-zod.
-//   3. Inferred TypeScript types exported for routes and views.
-//
-// Soft deletes (`deletedAt`) are the house convention: rows are filtered with
-// `isNull(note.deletedAt)` rather than removed, so audit history survives.
-// ---------------------------------------------------------------------------
+// Text-only study notes. A note can be pinned, tinted, made public, and linked
+// to any number of subjects, assignments and exams through `content_link`.
 
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
 
 import { users } from "./auth.schema";
 import { ownershipColumns } from "./common";
+import { checkbox, stringList } from "./form-helpers";
 
 /**
  * Accent slots, not colour names.
  *
  * Each maps to a `chart-*` theme token in the view layer, so a note's colour
  * follows the active theme instead of being a fixed hex that only reads well
- * in one mode. Storing the slot rather than the colour means a re-theme
- * restyles every existing note for free.
+ * in one mode.
  */
 export const NOTE_ACCENTS = ["neutral", "1", "2", "3", "4", "5"] as const;
 export type NoteAccent = (typeof NOTE_ACCENTS)[number];
@@ -39,6 +30,8 @@ export const note = sqliteTable(
     body: text("body"),
     pinned: integer("pinned", { mode: "boolean" }).default(false).notNull(),
     accent: text("accent", { enum: NOTE_ACCENTS }).default("neutral").notNull(),
+    /** Nothing is public by default. Public notes appear under /public. */
+    isPublic: integer("is_public", { mode: "boolean" }).default(false).notNull(),
     deletedAt: text("deleted_at"),
     ...ownershipColumns,
   },
@@ -56,24 +49,17 @@ export const noteRelations = relations(note, ({ one }) => ({
 // VALIDATION
 // ==========================================
 
-export const insertNoteSchema = createInsertSchema(note, {
-  title: z.string().min(1, "Title is required").max(120),
-  body: z.string().max(10_000).optional(),
-});
-
 export const selectNoteSchema = createSelectSchema(note);
 
-/** What an HTMX form posts. Ownership and timestamps are server-assigned. */
+/** What the form posts. Ownership and timestamps are server-assigned. */
 export const noteFormSchema = z.object({
-  title: z.string().min(1, "Title is required").max(120),
-  body: z.string().max(10_000).optional().default(""),
-  // An unchecked checkbox is absent from the body entirely, so this has to
-  // tolerate `undefined` as well as the "on" the browser sends when ticked.
-  pinned: z
-    .union([z.literal("on"), z.literal("true"), z.literal("")])
-    .optional()
-    .transform((v) => v === "on" || v === "true"),
+  title: z.string().trim().min(1, "Title is required").max(120),
+  body: z.string().max(50_000).optional().default(""),
+  pinned: checkbox,
+  isPublic: checkbox,
   accent: z.enum(NOTE_ACCENTS).optional().default("neutral"),
+  /** `subject:3`, `assignment:7`… — see content-link.schema.ts. */
+  links: stringList,
 });
 
 /** Query string for the list view: live search plus a pinned-only toggle. */
@@ -89,7 +75,6 @@ export const noteFilterSchema = z.object({
 // TYPES
 // ==========================================
 
-export type InsertNote = z.infer<typeof insertNoteSchema>;
 export type SelectNote = z.infer<typeof selectNoteSchema>;
 export type NoteForm = z.infer<typeof noteFormSchema>;
 export type NoteFilter = z.infer<typeof noteFilterSchema>;

@@ -76,15 +76,8 @@
     },
   ],
 
-  // CHANGE_ME — Dashboard: R2 -> Create bucket.
-  // Optional: delete this block and `R2` in worker/types.ts if the site
-  // stores no files.
-  "r2_buckets": [
-    {
-      "binding": "R2",
-      "bucket_name": "change-me-files",
-    },
-  ],
+  // No R2: version 1 stores no files. Notes are text and resources are links.
+  // Add an "r2_buckets" block (and `R2` in worker/types.ts) if uploads arrive.
 
   // Edge rate limiting. `namespace_id` is an arbitrary number you pick per
   // limiter within this worker — it is NOT a resource to provision, so
@@ -106,10 +99,13 @@
 
     // --- BRANDING ---
     // CHANGE_ME — how the site names itself in the title, nav and footer.
-    "APP_NAME": "Frug",
-    "APP_TAGLINE": "A Cloudflare Workers starter with batteries included.",
+    "APP_NAME": "Study Hub",
+    "APP_TAGLINE": "A cosy little corner for uni: plans, notes, flashcards and grades.",
     "APP_LOCALE": "en-AU",
     "APP_CURRENCY": "AUD",
+    // IANA zone. Decides what "today" means on the Today screen and planner —
+    // in UTC, a Perth morning is still yesterday until 8am.
+    "APP_TIMEZONE": "Australia/Perth",
 
     // --- CORE AUTH ---
     // Enabled methods: passkey, password, pin, totp, email, sms
@@ -138,6 +134,11 @@
     // Set this for an invite-only or single-user site.
     "ALLOWED_EMAILS": "",
 
+    // One-owner site. Sign-up accepts only BOOTSTRAP_ADMIN_EMAIL, and only
+    // while no account exists; after that /register is gone for good. Needs
+    // BOOTSTRAP_ADMIN_EMAIL set, or nobody can ever register.
+    "SINGLE_ACCOUNT": "true",
+
     // First-run admin, so you never need a terminal to get one. Register
     // normally with this exact email and that account becomes an admin — but
     // ONLY while no admin exists yet, so it disarms itself the moment it
@@ -156,14 +157,14 @@
     // Roles that cannot be self-assigned at registration. Get your first
     // admin with BOOTSTRAP_ADMIN_EMAIL below — no terminal needed.
     "ROLES_RESTRICTED": "admin",
-    "PERMISSIONS_AVAILABLE": "notes.read,notes.create,notes.update,notes.delete,notes.update.any,notes.delete.any",
-    "ROLES_INHERENT": "user:notes.read,notes.create,notes.update,notes.delete;admin:*",
+    "PERMISSIONS_AVAILABLE": "semesters.read,semesters.create,semesters.update,semesters.delete,subjects.read,subjects.create,subjects.update,subjects.delete,assignments.read,assignments.create,assignments.update,assignments.delete,exams.read,exams.create,exams.update,exams.delete,notes.read,notes.create,notes.update,notes.delete,resources.read,resources.create,resources.update,resources.delete,sessions.read,sessions.create,sessions.update,sessions.delete,flashcards.read,flashcards.create,flashcards.update,flashcards.delete,grades.read,grades.create,grades.update,grades.delete",
+    "ROLES_INHERENT": "admin:*",
 
     // --- PASSKEY / WEBAUTHN ---
     // CHANGE_ME — these MUST match the deployed domain or passkeys fail
     // with no useful error. RP_ID is the bare hostname (no scheme, no
     // port); ORIGIN is the full origin users load the site from.
-    "RP_NAME": "Frug",
+    "RP_NAME": "Study Hub",
     "RP_ID": "change-me.example.com",
     "ORIGIN": "https://change-me.example.com",
 
@@ -194,7 +195,7 @@
 
     // --- TOTP CONFIG ---
     // TOTP_ISSUER is the name shown in the user's authenticator app.
-    "TOTP_ISSUER": "Frug",
+    "TOTP_ISSUER": "Study Hub",
     "TOTP_ALGORITHM": "SHA1",
     "TOTP_DIGITS": "6",
     "TOTP_PERIOD": "30",

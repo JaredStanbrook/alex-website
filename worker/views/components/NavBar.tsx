@@ -8,14 +8,25 @@ import { PropsUser } from "@server/schema/auth.schema";
  *
  * This is the main thing to edit when you add a feature area to a new site.
  */
-const menuConfig: Record<string, Array<{ to: string; name: string }>> = {
-  default: [],
-  user: [{ to: "/notes", name: "Notes" }],
+const menuConfig: Record<string, Array<{ to: string; name: string; icon: string }>> = {
+  default: [{ to: "/public", name: "Shared", icon: "leaf" }],
+  // Signed in without the owner role: nothing of the study hub is theirs.
+  user: [{ to: "/public", name: "Shared", icon: "leaf" }],
   admin: [
-    { to: "/notes", name: "Notes" },
-    { to: "/admin/logs", name: "System Logs" },
+    { to: "/", name: "Today", icon: "sun" },
+    { to: "/semesters", name: "Subjects", icon: "book-open" },
+    { to: "/planner", name: "Planner", icon: "calendar-days" },
+    { to: "/assignments", name: "Assignments", icon: "clipboard-list" },
+    { to: "/exams", name: "Exams", icon: "graduation-cap" },
+    { to: "/notes", name: "Notes", icon: "notebook-pen" },
+    { to: "/resources", name: "Resources", icon: "library" },
+    { to: "/flashcards", name: "Flashcards", icon: "layers" },
+    { to: "/grades", name: "Grades", icon: "trophy" },
   ],
 };
+
+/** A signed-in path that belongs to a nav item without sharing its prefix. */
+const ALIASES: Record<string, string> = { "/subjects": "/semesters" };
 
 // --- COMPONENTS ---
 
@@ -158,7 +169,7 @@ interface NavBarProps {
 }
 
 const getMenuItems = (user: PropsUser | null | undefined) => {
-  const items: { to: string; name: string }[] = [];
+  const items: { to: string; name: string; icon: string }[] = [];
   const seen = new Set<string>();
 
   const roles = user?.roles ?? [];
@@ -178,7 +189,9 @@ export const NavBar = ({ appName, user, currentPath }: NavBarProps) => {
 
   const isActive = (to: string) => {
     if (to === "/") return currentPath === to;
-    return currentPath?.startsWith(to);
+    const path = currentPath ?? "";
+    const alias = Object.entries(ALIASES).find(([from]) => path.startsWith(from))?.[1];
+    return path.startsWith(to) || alias === to;
   };
 
   return html`
@@ -186,19 +199,24 @@ export const NavBar = ({ appName, user, currentPath }: NavBarProps) => {
       class="fixed top-0 left-0 right-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
     >
       <div class="flex h-14 items-center justify-between px-4">
-        <div class="flex items-center gap-6">
-          <a href="/" class="flex h-11 items-center gap-2 font-bold text-lg mr-4">
-            <div class="h-6 w-6 bg-primary rounded-md"></div>
+        <div class="flex items-center gap-4">
+          <a href="/" class="flex h-11 items-center gap-2 font-serif text-lg font-semibold">
+            <span
+              class="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground"
+            >
+              <i data-lucide="sprout" class="h-4 w-4"></i>
+            </span>
             ${appName}
           </a>
 
-          <nav class="hidden lg:flex items-center gap-6">
+          <nav class="hidden xl:flex items-center gap-0.5">
             ${menuItems.map(
               (item) => html`
                 <a
                   href="${item.to}"
-                  class="text-sm font-medium transition-colors hover:text-primary ${
-                    isActive(item.to) ? "text-foreground" : "text-muted-foreground"
+                  aria-current="${isActive(item.to) ? "page" : "false"}"
+                  class="inline-flex h-9 items-center rounded-lg px-3 text-sm font-medium transition-colors hover:text-primary ${
+                    isActive(item.to) ? "bg-primary/10 text-primary" : "text-muted-foreground"
                   }"
                 >
                   ${item.name}
@@ -209,24 +227,18 @@ export const NavBar = ({ appName, user, currentPath }: NavBarProps) => {
         </div>
 
         <div class="flex items-center gap-4">
-          <div class="hidden lg:block">${ThemeToggle()}</div>
+          <div class="hidden xl:block">${ThemeToggle()}</div>
 
-          <div class="hidden lg:block">
+          <div class="hidden xl:block">
             ${
               !user
                 ? html`
-                    <div class="flex items-center gap-2">
-                      <a
-                        href="/login"
-                        class="text-sm font-medium text-muted-foreground hover:text-primary"
-                        >Login</a
-                      >
-                      <a
-                        href="/register"
-                        class="inline-flex items-center justify-center rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-4 transition-colors"
-                        >Get Started</a
-                      >
-                    </div>
+                    <a
+                      href="/admin/login"
+                      class="inline-flex h-11 items-center gap-1.5 rounded-lg px-3 text-sm font-medium text-muted-foreground hover:text-primary"
+                    >
+                      <i data-lucide="key-round" class="h-4 w-4"></i> Owner sign-in
+                    </a>
                   `
                 : UserMenu({ user })
             }
@@ -234,7 +246,7 @@ export const NavBar = ({ appName, user, currentPath }: NavBarProps) => {
 
           <button
             id="mobile-menu-toggle"
-            class="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+            class="xl:hidden inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
             aria-label="Open menu"
           >
             <i data-lucide="menu" class="h-6 w-6"></i>
@@ -245,16 +257,20 @@ export const NavBar = ({ appName, user, currentPath }: NavBarProps) => {
 
     <div
       id="mobile-menu"
-      class="hidden fixed inset-0 z-[100] bg-background text-foreground lg:hidden flex flex-col animate-in slide-in-from-right-10 duration-200"
+      class="hidden fixed inset-0 z-[100] bg-background text-foreground xl:hidden flex flex-col animate-in slide-in-from-right-10 duration-200"
     >
       <div class="flex items-center justify-between px-4 h-14 border-b">
-        <span class="font-bold text-lg flex items-center gap-2">
-          <div class="h-6 w-6 bg-primary rounded-sm"></div>
+        <span class="font-serif font-semibold text-lg flex items-center gap-2">
+          <span
+            class="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground"
+          >
+            <i data-lucide="sprout" class="h-4 w-4"></i>
+          </span>
           Menu
         </span>
         <button
           id="mobile-menu-close"
-          class="p-2 rounded-md hover:bg-accent focus:outline-none"
+          class="inline-flex h-11 w-11 items-center justify-center rounded-md hover:bg-accent focus:outline-none"
           aria-label="Close menu"
         >
           <i data-lucide="x" class="h-6 w-6"></i>
@@ -262,15 +278,16 @@ export const NavBar = ({ appName, user, currentPath }: NavBarProps) => {
       </div>
 
       <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-6">
-        <nav class="flex flex-col gap-2">
+        <nav class="flex flex-col gap-1">
           ${menuItems.map(
             (item) => html`
               <a
                 href="${item.to}"
-                class="flex items-center py-3 px-4 rounded-lg text-lg font-medium transition-colors hover:bg-accent ${
-                  isActive(item.to) ? "bg-accent text-foreground" : "text-muted-foreground"
+                class="flex items-center gap-3 py-3 px-4 rounded-xl text-base font-medium transition-colors hover:bg-accent ${
+                  isActive(item.to) ? "bg-primary/10 text-primary" : "text-muted-foreground"
                 }"
               >
+                <i data-lucide="${item.icon}" class="h-5 w-5"></i>
                 ${item.name}
                 ${
                   isActive(item.to)
@@ -293,20 +310,12 @@ export const NavBar = ({ appName, user, currentPath }: NavBarProps) => {
           ${
             !user
               ? html`
-                  <div class="grid grid-cols-2 gap-4">
-                    <a
-                      href="/login"
-                      class="inline-flex items-center justify-center rounded-lg h-12 border border-input bg-background px-4 py-2 text-base font-medium hover:bg-accent hover:text-accent-foreground"
-                    >
-                      Login
-                    </a>
-                    <a
-                      href="/register"
-                      class="inline-flex items-center justify-center rounded-lg h-12 bg-primary px-4 py-2 text-base font-medium text-primary-foreground hover:bg-primary/90"
-                    >
-                      Get Started
-                    </a>
-                  </div>
+                  <a
+                    href="/admin/login"
+                    class="inline-flex items-center justify-center gap-2 rounded-lg h-12 border border-input bg-background px-4 py-2 text-base font-medium hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <i data-lucide="key-round" class="h-4 w-4"></i> Owner sign-in
+                  </a>
                 `
               : html`
                   <div class="rounded-xl border bg-card text-card-foreground shadow-sm">

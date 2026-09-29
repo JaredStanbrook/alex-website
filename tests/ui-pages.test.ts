@@ -20,6 +20,7 @@ const createAppConfig = (): AppConfig => ({
   tagline: "Testing",
   locale: "en-AU",
   currency: "AUD",
+  timezone: "UTC",
   origin: "http://localhost:3000",
 });
 
@@ -57,7 +58,7 @@ const createAuthConfig = (methods: string[] = ["password"]): AuthConfig => ({
  * when only one method is enabled, so a single-method config never renders
  * roughly half of those screens.
  */
-const createTestApp = (user: any | null, methods?: string[]) => {
+const createTestApp = (user: any | null, methods?: string[], registrationOpen = true) => {
   const fakeDb = createFakeDb(createMockData());
 
   const wrapper = new Hono<AppEnv>();
@@ -65,7 +66,12 @@ const createTestApp = (user: any | null, methods?: string[]) => {
     c.set("db", fakeDb as any);
     c.set("app", createAppConfig());
     c.set("authConfig", createAuthConfig(methods));
-    c.set("auth", { user, session: user ? { id: user.id } : null, destroySession() {} } as any);
+    c.set("auth", {
+      user,
+      session: user ? { id: user.id } : null,
+      destroySession() {},
+      isRegistrationOpen: async () => registrationOpen,
+    } as any);
     c.set("isMethodEnabled", () => true);
     await next();
   });
@@ -85,33 +91,142 @@ const env = {
 const get = (testApp: Hono<AppEnv>, path: string) =>
   testApp.fetch(new Request(`http://localhost${path}`), env);
 
+/** Every page the owner can open. Add a path here whenever you add a page. */
+const OWNER_PAGES = [
+  "/",
+  "/profile",
+  "/admin/logs",
+  "/semesters",
+  "/semesters?id=1",
+  "/semesters/new",
+  "/semesters/1/edit",
+  "/subjects/new",
+  "/subjects/new?semester=1",
+  "/subjects/1",
+  "/subjects/1/edit",
+  "/assignments",
+  "/assignments?show=done",
+  "/assignments?show=all",
+  "/assignments/new",
+  "/assignments/new?subject=1",
+  "/assignments/1/edit",
+  "/exams",
+  "/exams/new",
+  "/exams/1/edit",
+  "/planner",
+  "/planner?week=2026-03-02",
+  "/planner/new",
+  "/planner/new?date=2026-03-04&about=exam:1",
+  "/planner/1/edit",
+  "/notes",
+  "/notes/new",
+  "/notes/new?link=subject:1",
+  "/notes/1",
+  "/notes/1/edit",
+  "/resources",
+  "/resources/new",
+  "/resources/1/edit",
+  "/flashcards",
+  "/flashcards/new",
+  "/flashcards/1",
+  "/flashcards/1/edit",
+  "/flashcards/1/study",
+  "/flashcards/1/study?mode=learning",
+  "/flashcards/1/study?after=1",
+  "/flashcards/1/cards/1/edit",
+  "/grades",
+];
+
+/** What a signed-out visitor can open. */
+const PUBLIC_PAGES = [
+  "/",
+  "/admin/login",
+  "/register",
+  "/public",
+  "/public/notes/1",
+  "/public/flashcards/1/study",
+];
+
+/** Private to the owner: every one must turn a visitor away. */
+const PRIVATE_PAGES = [
+  "/profile",
+  "/admin/logs",
+  "/semesters",
+  "/subjects/1",
+  "/assignments",
+  "/exams",
+  "/planner",
+  "/notes",
+  "/notes/1",
+  "/resources",
+  "/flashcards",
+  "/flashcards/1/study",
+  "/grades",
+];
+
 describe("UI pages load", () => {
   it("serves public pages to signed-out visitors", async () => {
     const testApp = createTestApp(null);
 
-    for (const path of ["/", "/login", "/register"]) {
+    for (const path of PUBLIC_PAGES) {
       const res = await get(testApp, path);
       expect(res.status, `GET ${path}`).toBe(200);
     }
   });
 
-  it("redirects signed-out visitors away from protected pages", async () => {
+  it("sends the old sign-in address to /admin/login", async () => {
+    const res = await get(createTestApp(null), "/login");
+    expect(res.status).toBe(301);
+    expect(res.headers.get("location")).toBe("/admin/login");
+  });
+
+  it("closes /register once sign-up is closed", async () => {
+    const closed = createTestApp(null, undefined, false);
+    const res = await get(closed, "/register");
+    expect(res.status).toBe(302);
+    expect(res.headers.get("location")).toBe("/admin/login");
+
+    // And the sign-in page stops offering it.
+    const login = await (await get(closed, "/admin/login")).text();
+    expect(login).not.toContain('href="/register"');
+  });
+
+  it("redirects signed-out visitors away from private pages", async () => {
     const testApp = createTestApp(null);
 
-    for (const path of ["/profile", "/notes", "/admin/logs"]) {
+    for (const path of PRIVATE_PAGES) {
       const res = await get(testApp, path);
       expect(res.status, `GET ${path}`).toBe(302);
-      expect(res.headers.get("location"), `GET ${path}`).toBe("/login");
+      expect(res.headers.get("location"), `GET ${path}`).toBe("/admin/login");
     }
   });
 
-  it("serves protected pages to a signed-in admin", async () => {
+  it("turns away a signed-in account that is not the owner", async () => {
+    const stranger = { ...createMockData().users[0], roles: ["user"], permissions: [] };
+    const testApp = createTestApp(stranger);
+
+    for (const path of PRIVATE_PAGES.filter((p) => p !== "/profile")) {
+      const res = await get(testApp, path);
+      expect(res.status, `GET ${path}`).toBe(302);
+    }
+  });
+
+  it("serves every study page to the owner", async () => {
     const testApp = createTestApp(createMockData().users[0]);
 
-    for (const path of ["/", "/profile", "/notes", "/notes/new", "/notes/1/edit", "/admin/logs"]) {
+    for (const path of OWNER_PAGES) {
       const res = await get(testApp, path);
       expect(res.status, `GET ${path}`).toBe(200);
     }
+  });
+
+  it("shows the owner Today, and a visitor the public front page", async () => {
+    const owner = await (await get(createTestApp(createMockData().users[0]), "/")).text();
+    expect(owner).toContain("Today&#39;s study");
+
+    const visitor = await (await get(createTestApp(null), "/")).text();
+    expect(visitor).not.toContain("Today&#39;s study");
+    expect(visitor).toContain("Cranial nerves"); // a public set
   });
 
   it("serves the notes list with search and filter params", async () => {
@@ -151,15 +266,10 @@ describe("UI pages load", () => {
     const multiMethod = createTestApp(null, ["password", "pin", "passkey"]);
 
     const pages: [Hono<AppEnv>, string][] = [
-      [signedOut, "/"],
-      [signedOut, "/login"],
-      [signedOut, "/register"],
-      [multiMethod, "/login"],
+      ...PUBLIC_PAGES.map((p): [Hono<AppEnv>, string] => [signedOut, p]),
+      [multiMethod, "/admin/login"],
       [multiMethod, "/register"],
-      [signedIn, "/profile"],
-      [signedIn, "/notes"],
-      [signedIn, "/notes/new"],
-      [signedIn, "/admin/logs"],
+      ...OWNER_PAGES.map((p): [Hono<AppEnv>, string] => [signedIn, p]),
     ];
 
     for (const [testApp, path] of pages) {
@@ -184,7 +294,7 @@ describe("UI pages load", () => {
       return { strip, tabs: (html.match(/data-tab="/g) ?? []).length };
     };
 
-    for (const path of ["/login", "/register"]) {
+    for (const path of ["/admin/login", "/register"]) {
       const three = await tabsFor(["password", "pin", "passkey"], path);
       expect(three.tabs, `${path} with three tabs`).toBe(3);
       expect(three.strip, `${path} with three tabs`).toContain("grid-cols-3");

@@ -9,9 +9,20 @@ import type { SafeUser } from "./schema/auth.schema.ts";
 import { apiAuth } from "./routes/api/auth";
 import { webAuth } from "./routes/web/auth";
 import { logsRoute } from "./routes/admin/logs";
-import { notesRoute } from "./routes/notes.tsx";
 import { seoRoute } from "./routes/seo";
 import devRouter from "./routes/dev.tsx";
+
+import { homeRoute } from "./routes/study/home.tsx";
+import { publicRoute } from "./routes/study/public.tsx";
+import { semestersRoute } from "./routes/study/semesters.tsx";
+import { subjectsRoute } from "./routes/study/subjects.tsx";
+import { assignmentsRoute } from "./routes/study/assignments.tsx";
+import { examsRoute } from "./routes/study/exams.tsx";
+import { plannerRoute } from "./routes/study/planner.tsx";
+import { notesRoute } from "./routes/study/notes.tsx";
+import { resourcesRoute } from "./routes/study/resources.tsx";
+import { flashcardsRoute } from "./routes/study/flashcards.tsx";
+import { gradesRoute } from "./routes/study/grades.tsx";
 
 import type { AppEnv } from "./types";
 
@@ -37,13 +48,28 @@ const app = new Hono<AppEnv>()
   // Global renderer (wraps SSR responses in Layout).
   .use("*", globalRenderer)
 
-  .route("/admin", admin)
-
-  // Public pages: home, login, register, logout.
+  // Sign-in, sign-up and sign-out. Before /admin, because /admin/login has to
+  // be reachable by someone who is not signed in yet.
   .route("/", webAuth)
 
-  // Example feature. Delete once you have a real one.
+  .route("/admin", admin)
+
+  // "/" — Today for the owner, the public front page for everyone else.
+  .route("/", homeRoute)
+
+  // Signed-out pages for content the owner made public.
+  .route("/public", publicRoute)
+
+  // The study hub itself. Each router guards itself with requireRole("admin").
+  .route("/semesters", semestersRoute)
+  .route("/subjects", subjectsRoute)
+  .route("/assignments", assignmentsRoute)
+  .route("/exams", examsRoute)
+  .route("/planner", plannerRoute)
   .route("/notes", notesRoute)
+  .route("/resources", resourcesRoute)
+  .route("/flashcards", flashcardsRoute)
+  .route("/grades", gradesRoute)
 
   // Any signed-in user can view their own profile.
   .get("/profile", requireUser, (c) => {

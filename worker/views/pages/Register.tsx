@@ -239,7 +239,10 @@ export const Register: FC<RegisterProps> = (props) => {
 
         <p class="px-8 mt-6 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <a href="/login" class="underline underline-offset-4 hover:text-primary font-medium">
+          <a
+            href="/admin/login"
+            class="underline underline-offset-4 hover:text-primary font-medium"
+          >
             Sign In
           </a>
         </p>
