@@ -7,6 +7,7 @@ import type { PublicContent } from "@server/routes/study/public";
 import { formatDateShort } from "@views/lib/utils";
 import { hostOf } from "./resources";
 import { BTN_OUTLINE, BTN_PRIMARY, CARD, EmptyState, Page, Section } from "./ui";
+import { Blossom, Wreath } from "./florals";
 
 const PublicSections = ({ content }: { content: PublicContent }) => {
   const { notes, resources, sets } = content;
@@ -104,10 +105,11 @@ export const PublicHome = ({
 }) => (
   <div class="mx-auto w-full max-w-5xl space-y-12 px-4 pb-20 pt-12 sm:px-6 sm:pt-16 animate-in fade-in duration-300">
     <section class="space-y-4 text-center">
-      <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-        <i data-lucide="sprout" class="h-7 w-7"></i>
+      <div class="relative mx-auto flex h-32 w-32 items-center justify-center">
+        <Wreath class="absolute inset-0 h-full w-full" />
+        <Blossom class="relative -mt-2 h-12 w-12" petal="fill-chart-5" />
       </div>
-      <h1 class="font-serif text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+      <h1 class="font-serif text-5xl font-medium italic tracking-tight text-balance sm:text-6xl">
         {app.name}
       </h1>
       {app.tagline ? (

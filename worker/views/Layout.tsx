@@ -4,6 +4,7 @@ import { type PropsUser } from "@server/schema/auth.schema";
 import type { AppConfig } from "@server/config/app.config";
 import type { ResolvedMeta } from "@server/lib/seo";
 import { NavBar } from "./components/NavBar";
+import { FloralRule } from "./study/florals";
 
 interface LayoutProps {
   meta: ResolvedMeta;
@@ -71,7 +72,7 @@ export const Layout: FC<LayoutProps> = (props) => {
 
         ${
           props.meta.bare
-            ? html`<header class="border-b">
+            ? html`<header class="scalloped bg-card">
                 <div class="flex h-14 items-center px-4 font-bold text-lg">${props.app.name}</div>
               </header>`
             : NavBar({
@@ -95,12 +96,11 @@ export const Layout: FC<LayoutProps> = (props) => {
 
         <app-toaster></app-toaster>
 
-        <footer class="py-6 md:px-8 md:py-0">
-          <div class="flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
-            <p class="text-center text-sm leading-loose text-muted-foreground md:text-left">
-              ${props.app.tagline || props.app.name}
-            </p>
-          </div>
+        <footer class="mx-auto w-full max-w-5xl px-4 pb-10 pt-4 sm:px-6">
+          ${FloralRule({ class: "mb-4" })}
+          <p class="text-center font-serif text-sm italic text-muted-foreground">
+            ${props.app.tagline || props.app.name}
+          </p>
         </footer>
       </body>
     </html>

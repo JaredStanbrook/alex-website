@@ -458,17 +458,20 @@ export const StudyStage = ({ step, mode, base, owner = false }: StudyProps) => {
       </div>
 
       <div class={`${CARD} overflow-hidden`}>
-        <div class="flex min-h-48 items-center justify-center p-8 text-center">
-          <p class="font-serif text-xl leading-relaxed whitespace-pre-line break-words sm:text-2xl">
+        {/* A ruled index card with a rose margin line. */}
+        <div class="index-card flex min-h-56 items-center justify-center py-10 pl-12 pr-6 text-center">
+          <p class="font-serif text-2xl leading-relaxed whitespace-pre-line break-words sm:text-3xl">
             {card.front}
           </p>
         </div>
         <details class="group border-t">
-          <summary class="flex min-h-14 cursor-pointer list-none items-center justify-center gap-2 bg-muted/40 text-sm font-medium text-primary hover:bg-muted/70 [&::-webkit-details-marker]:hidden group-open:hidden">
+          <summary class="flex min-h-14 cursor-pointer list-none items-center justify-center gap-2 bg-accent/50 text-sm font-semibold text-primary hover:bg-accent [&::-webkit-details-marker]:hidden group-open:hidden">
             <i data-lucide="eye" class="h-4 w-4"></i> Show answer
           </summary>
           <div class="space-y-5 bg-secondary/40 p-6 text-center">
-            <p class="text-lg leading-relaxed whitespace-pre-line break-words">{card.back}</p>
+            <p class="font-hand text-3xl leading-snug whitespace-pre-line break-words sm:text-4xl">
+              {card.back}
+            </p>
             {owner ? (
               <div class="grid grid-cols-2 gap-3">
                 <button

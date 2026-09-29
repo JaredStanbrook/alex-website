@@ -1,147 +1,148 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* BASE THEME: "Light" (Refined)
-  Vibe: Airy, sun-washed, morning light. 
-  Soft off-whites and warm greys replace clinical white.
-*/
+/* Self-hosted through npm (fontsource), so there is no font CDN at runtime:
+   the woff2 files are bundled by Vite and served from our own origin.
+   Fraunces "soft" is the vintage display face, Nunito the rounded body face,
+   Caveat the handwriting used for small margin notes. */
+@import "@fontsource-variable/fraunces/soft.css";
+@import "@fontsource-variable/fraunces/soft-italic.css";
+@import "@fontsource-variable/nunito/index.css";
+@import "@fontsource/caveat/500.css";
+@import "@fontsource/caveat/700.css";
+
+/* LIGHT: "Pressed flowers"
+   Parchment paper, sepia ink, dusty rose, sage leaves, faded denim. */
 :root {
   /* Tells the browser to render native controls (checkboxes, radios,
-     scrollbars, date pickers) in the matching scheme. Without it a native
-     checkbox stays light-on-dark and looks pasted on. */
+     scrollbars, date pickers) in the matching scheme. */
   color-scheme: light;
 
-  --background: oklch(0.985 0.002 90); /* Soft warm white, not sterile */
-  --foreground: oklch(0.25 0.02 80); /* Soft deep grey-brown text */
-  --card: oklch(1 0 0); /* Pure white cards for clean lift */
-  --card-foreground: oklch(0.25 0.02 80);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.25 0.02 80);
+  --background: oklch(0.965 0.018 78); /* parchment */
+  --foreground: oklch(0.31 0.035 40); /* sepia ink */
+  --card: oklch(0.988 0.01 80); /* fresh writing paper */
+  --card-foreground: oklch(0.31 0.035 40);
+  --popover: oklch(0.988 0.01 80);
+  --popover-foreground: oklch(0.31 0.035 40);
 
-  --primary: oklch(0.55 0.08 140); /* Muted eucalyptus green */
-  --primary-foreground: oklch(0.98 0.005 140);
+  --primary: oklch(0.55 0.1 12); /* dusty old rose */
+  --primary-foreground: oklch(0.985 0.012 80);
 
-  --secondary: oklch(0.94 0.03 95); /* Warm sandstone wash */
-  --secondary-foreground: oklch(0.35 0.04 80);
+  --secondary: oklch(0.925 0.035 140); /* sage wash */
+  --secondary-foreground: oklch(0.37 0.055 145);
 
-  --muted: oklch(0.96 0.01 90);
-  --muted-foreground: oklch(0.55 0.02 80);
+  --muted: oklch(0.935 0.02 75);
+  --muted-foreground: oklch(0.49 0.035 50);
 
-  --accent: oklch(0.94 0.03 95);
-  --accent-foreground: oklch(0.35 0.04 80);
+  --accent: oklch(0.935 0.03 18); /* blush */
+  --accent-foreground: oklch(0.36 0.06 15);
 
-  --destructive: oklch(0.6 0.18 25);
-  --destructive-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.53 0.15 30); /* brick */
+  --destructive-foreground: oklch(0.985 0.01 80);
 
-  /* Status roles, so a feature never has to reach for a raw palette colour.
-     `bg-emerald-100 text-emerald-800` and friends have no dark counterpart —
-     they render dark-on-dark the moment the theme flips — and that is exactly
-     what happens when the theme offers no semantic token for "this went well"
-     or "this needs attention". */
-  --success: oklch(0.55 0.13 150);
-  --success-foreground: oklch(0.98 0 0);
-  --warning: oklch(0.82 0.16 85);
-  --warning-foreground: oklch(0.25 0.03 85);
+  /* Status roles, so a feature never has to reach for a raw palette colour. */
+  --success: oklch(0.5 0.09 145); /* deep sage */
+  --success-foreground: oklch(0.985 0.01 80);
+  --warning: oklch(0.83 0.11 85); /* mustard */
+  --warning-foreground: oklch(0.3 0.05 70);
 
-  --border: oklch(0.92 0.01 90); /* Subtle warm grey border */
-  --input: oklch(0.92 0.01 90);
-  --ring: oklch(0.55 0.08 140);
+  --border: oklch(0.86 0.03 70); /* tan thread */
+  --input: oklch(0.84 0.03 70);
+  --ring: oklch(0.55 0.1 12);
 
-  --chart-1: oklch(0.55 0.08 140);
-  --chart-2: oklch(0.65 0.12 60);
-  --chart-3: oklch(0.5 0.06 200);
-  --chart-4: oklch(0.75 0.14 85);
-  --chart-5: oklch(0.7 0.1 40);
+  /* Subject colours: rose, sage, denim, mustard, lavender. */
+  --chart-1: oklch(0.63 0.1 12);
+  --chart-2: oklch(0.6 0.075 145);
+  --chart-3: oklch(0.58 0.065 245);
+  --chart-4: oklch(0.76 0.11 82);
+  --chart-5: oklch(0.62 0.08 305);
 
-  --sidebar: oklch(0.975 0.005 90);
-  --sidebar-foreground: oklch(0.3 0.02 80);
-  --sidebar-primary: oklch(0.55 0.08 140);
-  --sidebar-primary-foreground: oklch(0.98 0.005 140);
-  --sidebar-accent: oklch(0.94 0.02 90);
-  --sidebar-accent-foreground: oklch(0.3 0.02 80);
-  --sidebar-border: oklch(0.9 0.01 90);
-  --sidebar-ring: oklch(0.55 0.08 140);
+  --sidebar: oklch(0.955 0.02 78);
+  --sidebar-foreground: oklch(0.31 0.035 40);
+  --sidebar-primary: oklch(0.55 0.1 12);
+  --sidebar-primary-foreground: oklch(0.985 0.012 80);
+  --sidebar-accent: oklch(0.935 0.03 18);
+  --sidebar-accent-foreground: oklch(0.36 0.06 15);
+  --sidebar-border: oklch(0.86 0.03 70);
+  --sidebar-ring: oklch(0.55 0.1 12);
 
-  /* System font stacks: nothing to download, no layout shift, and the text is
-     painted on the first frame. The theme previously named Montserrat, Domine
-     and Source Code Pro without ever loading them, so every page silently fell
-     back to these anyway — this just makes the declaration honest.
-
-     To use a real typeface, self-host the woff2 in public/ and add an
-     @font-face here with `font-display: swap`. Do not link a font CDN: it
-     reintroduces the third-party runtime dependency the client bundle exists
-     to avoid, and blocks first paint on a third party. */
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-    "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    "Nunito Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  --font-serif: "Fraunces Variable", ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
   --font-mono:
     ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
-  --radius: 0.5rem; /* Modern but soft radius */
-  --shadow-2xs: 0px 5px 10px -2px hsl(40 20% 60% / 0.05);
-  --shadow-xs: 0px 5px 10px -2px hsl(40 20% 60% / 0.05);
-  --shadow-sm: 0px 5px 10px -2px hsl(40 20% 60% / 0.08), 0px 1px 2px -3px hsl(40 20% 60% / 0.08);
-  --shadow: 0px 5px 10px -2px hsl(40 20% 60% / 0.08), 0px 1px 2px -3px hsl(40 20% 60% / 0.08);
-  --shadow-md: 0px 5px 10px -2px hsl(40 20% 60% / 0.1), 0px 2px 4px -3px hsl(40 20% 60% / 0.1);
-  --shadow-lg: 0px 5px 10px -2px hsl(40 20% 60% / 0.1), 0px 4px 6px -3px hsl(40 20% 60% / 0.1);
-  --shadow-xl: 0px 5px 10px -2px hsl(40 20% 60% / 0.1), 0px 8px 10px -3px hsl(40 20% 60% / 0.1);
-  --shadow-2xl: 0px 5px 10px -2px hsl(40 20% 60% / 0.25);
+  --radius: 0.85rem; /* soft, rounded, a little old-fashioned */
+
+  /* Warm sepia shadows, never grey. */
+  --shadow-2xs: 0 1px 2px hsl(30 30% 40% / 0.05);
+  --shadow-xs: 0 1px 3px hsl(30 30% 40% / 0.06);
+  --shadow-sm: 0 1px 2px hsl(30 30% 40% / 0.06), 0 4px 14px -6px hsl(30 35% 35% / 0.14);
+  --shadow: 0 1px 2px hsl(30 30% 40% / 0.06), 0 6px 18px -8px hsl(30 35% 35% / 0.16);
+  --shadow-md: 0 2px 4px hsl(30 30% 40% / 0.06), 0 10px 24px -10px hsl(30 35% 35% / 0.22);
+  --shadow-lg: 0 4px 8px hsl(30 30% 40% / 0.06), 0 16px 32px -12px hsl(30 35% 35% / 0.24);
+  --shadow-xl: 0 6px 12px hsl(30 30% 40% / 0.07), 0 24px 44px -16px hsl(30 35% 35% / 0.26);
+  --shadow-2xl: 0 30px 60px -20px hsl(30 35% 30% / 0.3);
 }
 
-/* THEME: "Dark" (Refined)
-  Vibe: Evening hills atmosphere. 
-  Deep charcoal/warm black (no pure blacks), Jarrah accents.
-*/
+/* DARK: "Candlelit"
+   A cottage at night: walnut and plum, cream ink, rose glowing like a lamp. */
 .dark {
   color-scheme: dark;
 
-  --background: oklch(0.16 0.01 280); /* Deep charcoal, slight cool undertone */
-  --foreground: oklch(0.9 0.01 280); /* Soft off-white */
-  --card: oklch(0.2 0.01 280); /* Slightly raised surface */
-  --card-foreground: oklch(0.9 0.01 280);
-  --popover: oklch(0.2 0.01 280);
-  --popover-foreground: oklch(0.9 0.01 280);
+  --background: oklch(0.2 0.018 35); /* walnut */
+  --foreground: oklch(0.91 0.025 80); /* cream */
+  --card: oklch(0.245 0.022 35);
+  --card-foreground: oklch(0.91 0.025 80);
+  --popover: oklch(0.255 0.022 35);
+  --popover-foreground: oklch(0.91 0.025 80);
 
-  --primary: oklch(0.65 0.15 45); /* Warm Jarrah / Amber highlight */
-  --primary-foreground: oklch(0.16 0.01 280);
+  --primary: oklch(0.76 0.085 14); /* lamplit rose */
+  --primary-foreground: oklch(0.22 0.03 20);
 
-  --secondary: oklch(0.25 0.02 280);
-  --secondary-foreground: oklch(0.85 0.01 280);
+  --secondary: oklch(0.3 0.035 145);
+  --secondary-foreground: oklch(0.86 0.05 140);
 
-  --muted: oklch(0.25 0.02 280);
-  --muted-foreground: oklch(0.65 0.02 280);
+  --muted: oklch(0.285 0.02 40);
+  --muted-foreground: oklch(0.72 0.03 70);
 
-  --accent: oklch(0.28 0.02 280);
-  --accent-foreground: oklch(0.9 0.01 280);
+  --accent: oklch(0.31 0.035 20);
+  --accent-foreground: oklch(0.92 0.03 30);
 
-  --destructive: oklch(0.6 0.18 25);
-  --destructive-foreground: oklch(0.95 0 0);
+  --destructive: oklch(0.68 0.14 28);
+  --destructive-foreground: oklch(0.2 0.02 30);
 
   /* Brighter, so both still clear 4.5:1 against a dark field. */
-  --success: oklch(0.72 0.16 150);
-  --success-foreground: oklch(0.16 0.01 280);
-  --warning: oklch(0.85 0.16 85);
-  --warning-foreground: oklch(0.16 0.01 280);
+  --success: oklch(0.76 0.1 145);
+  --success-foreground: oklch(0.2 0.02 145);
+  --warning: oklch(0.84 0.11 85);
+  --warning-foreground: oklch(0.22 0.03 70);
 
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.65 0.15 45);
+  --border: oklch(0.91 0.025 80 / 14%);
+  --input: oklch(0.91 0.025 80 / 18%);
+  --ring: oklch(0.76 0.085 14);
 
-  --chart-1: oklch(0.65 0.15 45); /* Jarrah */
-  --chart-2: oklch(0.55 0.1 140); /* Deep Bush Green */
-  --chart-3: oklch(0.7 0.12 80); /* Clay */
-  --chart-4: oklch(0.5 0.08 240); /* Night Sky */
-  --chart-5: oklch(0.75 0.1 320); /* Dusk Purple */
+  --chart-1: oklch(0.74 0.09 12);
+  --chart-2: oklch(0.72 0.075 145);
+  --chart-3: oklch(0.7 0.07 245);
+  --chart-4: oklch(0.8 0.1 82);
+  --chart-5: oklch(0.72 0.08 305);
 
-  --sidebar: oklch(0.14 0.01 280);
-  --sidebar-foreground: oklch(0.9 0.01 280);
-  --sidebar-primary: oklch(0.65 0.15 45);
-  --sidebar-primary-foreground: oklch(0.16 0.01 280);
-  --sidebar-accent: oklch(0.22 0.01 280);
-  --sidebar-accent-foreground: oklch(0.9 0.01 280);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.65 0.15 45);
+  --sidebar: oklch(0.22 0.02 35);
+  --sidebar-foreground: oklch(0.91 0.025 80);
+  --sidebar-primary: oklch(0.76 0.085 14);
+  --sidebar-primary-foreground: oklch(0.22 0.03 20);
+  --sidebar-accent: oklch(0.31 0.035 20);
+  --sidebar-accent-foreground: oklch(0.92 0.03 30);
+  --sidebar-border: oklch(0.91 0.025 80 / 12%);
+  --sidebar-ring: oklch(0.76 0.085 14);
+
+  --shadow-sm: 0 1px 2px hsl(20 40% 3% / 0.3), 0 4px 14px -6px hsl(20 40% 3% / 0.45);
+  --shadow: 0 1px 2px hsl(20 40% 3% / 0.3), 0 6px 18px -8px hsl(20 40% 3% / 0.5);
+  --shadow-md: 0 2px 4px hsl(20 40% 3% / 0.3), 0 10px 24px -10px hsl(20 40% 3% / 0.55);
+  --shadow-lg: 0 4px 8px hsl(20 40% 3% / 0.3), 0 16px 32px -12px hsl(20 40% 3% / 0.6);
 }
 
 @theme inline {
@@ -185,6 +186,7 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
+  --font-hand: var(--font-hand);
 
   --text-tiny: 0.625rem;
 
@@ -218,6 +220,119 @@
   ::file-selector-button {
     border-color: var(--color-border, currentColor);
   }
+}
+
+/* ------------------------------------------------------------------
+   VINTAGE & FLORAL
+   Decoration is drawn as masks filled with theme tokens, so it recolours
+   with the theme instead of being a picture that only suits one mode.
+   ------------------------------------------------------------------ */
+
+/* Faint scattered blossoms on the page, like patterned writing paper.
+   Painted behind everything; pointer-events off so it never gets in the way. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--primary);
+  opacity: 0.07;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill='%23000'%3E%3Cg transform='translate(40 48)'%3E%3Ccircle cx='0' cy='-7' r='5'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5'/%3E%3Ccircle cx='4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5'/%3E%3C/g%3E%3Cg transform='translate(190 120) scale(.7)'%3E%3Ccircle cx='0' cy='-7' r='5'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5'/%3E%3Ccircle cx='4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5'/%3E%3C/g%3E%3Cg transform='translate(96 206) scale(.85)'%3E%3Ccircle cx='0' cy='-7' r='5'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5'/%3E%3Ccircle cx='4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5'/%3E%3C/g%3E%3Cpath d='M60 60c14 6 22 18 22 32-12-4-20-14-22-32zM205 132c-4 12-14 18-26 18 4-10 13-17 26-18zM112 214c10-8 22-8 32 0-10 7-22 7-32 0z'/%3E%3Ccircle cx='150' cy='40' r='2'/%3E%3Ccircle cx='230' cy='220' r='2.5'/%3E%3Ccircle cx='20' cy='160' r='2'/%3E%3Ccircle cx='130' cy='130' r='1.6'/%3E%3C/g%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill='%23000'%3E%3Cg transform='translate(40 48)'%3E%3Ccircle cx='0' cy='-7' r='5'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5'/%3E%3Ccircle cx='4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5'/%3E%3C/g%3E%3Cg transform='translate(190 120) scale(.7)'%3E%3Ccircle cx='0' cy='-7' r='5'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5'/%3E%3Ccircle cx='4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5'/%3E%3C/g%3E%3Cg transform='translate(96 206) scale(.85)'%3E%3Ccircle cx='0' cy='-7' r='5'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5'/%3E%3Ccircle cx='4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5'/%3E%3C/g%3E%3Cpath d='M60 60c14 6 22 18 22 32-12-4-20-14-22-32zM205 132c-4 12-14 18-26 18 4-10 13-17 26-18zM112 214c10-8 22-8 32 0-10 7-22 7-32 0z'/%3E%3Ccircle cx='150' cy='40' r='2'/%3E%3Ccircle cx='230' cy='220' r='2.5'/%3E%3Ccircle cx='20' cy='160' r='2'/%3E%3Ccircle cx='130' cy='130' r='1.6'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-size: 260px 260px;
+  mask-size: 260px 260px;
+}
+.dark body::before {
+  opacity: 0.05;
+}
+
+/* A scalloped hem under the header, like the edge of a lace doily. */
+.scalloped {
+  position: relative;
+}
+.scalloped::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 9px;
+  pointer-events: none;
+  background: radial-gradient(circle at 9px 0, var(--card) 8px, transparent 8.5px) repeat-x;
+  background-size: 18px 9px;
+  filter: drop-shadow(0 1px 0 var(--border));
+}
+
+/* An index card: ruled lines and a rose margin, for flashcards. */
+.index-card {
+  background-color: var(--card);
+  background-image:
+    linear-gradient(
+      to right,
+      transparent 2.25rem,
+      color-mix(in oklch, var(--primary) 35%, transparent) 2.25rem,
+      color-mix(in oklch, var(--primary) 35%, transparent) calc(2.25rem + 1px),
+      transparent calc(2.25rem + 1px)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 1.95rem,
+      color-mix(in oklch, var(--chart-3) 16%, transparent) 1.95rem,
+      color-mix(in oklch, var(--chart-3) 16%, transparent) 2rem
+    );
+  background-position:
+    0 0,
+    0 1.25rem;
+}
+
+/* A strip of washi tape holding a card to the page. Colour comes from the
+   element's own `bg-*` class; this only shapes it. */
+.washi {
+  position: absolute;
+  top: -0.65rem;
+  left: 50%;
+  width: 5.5rem;
+  height: 1.4rem;
+  transform: translateX(-50%) rotate(-2.5deg);
+  opacity: 0.85;
+  pointer-events: none;
+  /* Torn, zig-zag ends. */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    97% 20%,
+    100% 40%,
+    97% 60%,
+    100% 80%,
+    97% 100%,
+    0 100%,
+    3% 80%,
+    0 60%,
+    3% 40%,
+    0 20%,
+    3% 0
+  );
+}
+
+/* Stitched edge: a dashed thread just inside a card's border. */
+.stitched {
+  position: relative;
+}
+.stitched::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1.5px dashed color-mix(in oklch, var(--border) 85%, var(--foreground) 15%);
+  border-radius: calc(var(--radius) + 2px);
+  pointer-events: none;
+}
+
+/* Headings in the soft vintage serif, with its optical sizing. */
+.font-serif {
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100;
 }
 
 /* Container for scrolling text */

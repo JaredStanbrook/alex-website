@@ -61,12 +61,13 @@ export const NoteCard = ({
 }) => (
   <article
     id={`note-${note.id}`}
-    class={`${CARD} relative flex flex-col overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md`}
+    class={`${CARD} relative mt-3 flex flex-col transition-all hover:-translate-y-0.5 hover:rotate-[0.4deg] hover:shadow-md`}
   >
-    <div class={`h-1.5 w-full ${accentOf(note).bar}`}></div>
-    <div class="flex flex-1 flex-col gap-2 p-5">
+    {/* A strip of washi tape in the note's colour holds it to the page. */}
+    <span aria-hidden="true" class={`washi ${accentOf(note).bar}`}></span>
+    <div class="flex flex-1 flex-col gap-2 p-5 pt-6">
       <div class="flex items-start justify-between gap-2">
-        <h3 class="min-w-0 font-medium leading-snug line-clamp-2">
+        <h3 class="min-w-0 font-serif text-lg font-medium leading-snug line-clamp-2">
           <a href={`/notes/${note.id}`} class="after:absolute after:inset-0 hover:text-primary">
             {note.title}
           </a>
@@ -103,7 +104,7 @@ export const NoteCard = ({
 export const NoteGrid = ({ notes, targets, locale, query, pinnedOnly }: NoteListProps) => {
   const filtered = Boolean(query) || pinnedOnly;
   return (
-    <div id="note-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div id="note-grid" class="grid gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
       {notes.length === 0 ? (
         <div class="col-span-full">
           <EmptyState
@@ -238,13 +239,12 @@ export const NoteDetailPage = ({
     }
   >
     <TargetChips targets={targets} />
-    <article class={`${CARD} relative overflow-hidden`}>
-      <div class={`h-1.5 w-full ${accentOf(note).bar}`}></div>
-      <div class="p-6 sm:p-8">
+    {/* Lined paper with a margin, taped at the top: the note as a page. */}
+    <article class={`${CARD} index-card relative mt-4`}>
+      <span aria-hidden="true" class={`washi ${accentOf(note).bar}`}></span>
+      <div class="pb-8 pl-12 pr-6 pt-[1.7rem] sm:pr-8">
         {note.body ? (
-          <div class="text-[0.95rem] leading-relaxed whitespace-pre-wrap break-words">
-            {note.body}
-          </div>
+          <div class="text-base leading-8 whitespace-pre-wrap break-words">{note.body}</div>
         ) : (
           <p class="italic text-muted-foreground">
             This note is empty.{" "}

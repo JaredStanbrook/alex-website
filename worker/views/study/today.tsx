@@ -12,6 +12,7 @@ import { daysUntil } from "@server/lib/dates";
 import { AssignmentLine, type SubjectLite } from "./assessments";
 import { SessionCard } from "./planner";
 import { BTN_OUTLINE, BTN_PRIMARY, CARD, Dot, EmptyState, ProgressBar, Section } from "./ui";
+import { FloralRule, Sprig } from "./florals";
 import { formatDay, formatMinutes, formatTime, formatWeekday, relativeDay } from "./format";
 
 export interface RecentItem {
@@ -81,13 +82,14 @@ export const TodayPage = (p: TodayProps) => {
 
   return (
     <div class="mx-auto w-full max-w-5xl space-y-8 px-4 pb-20 pt-8 sm:px-6 sm:pt-10 animate-in fade-in duration-300">
-      <header class="space-y-2">
-        <p class="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-primary">
-          <i data-lucide={hello.icon} class="h-3.5 w-3.5"></i>
+      <header class="relative space-y-2">
+        <Sprig class="pointer-events-none absolute -top-2 right-0 hidden h-24 w-48 -scale-x-100 md:block" />
+        <p class="flex items-center gap-1.5 font-hand text-2xl leading-none text-primary">
+          <i data-lucide={hello.icon} class="h-4 w-4"></i>
           {formatWeekday(p.today, p.locale)}, {formatDay(p.today, p.locale).replace(/^\S+\s/, "")}
           {p.semester ? ` · ${p.semester.name}${semesterWeek ? `, week ${semesterWeek}` : ""}` : ""}
         </p>
-        <h1 class="font-serif text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+        <h1 class="font-serif text-4xl font-medium tracking-tight text-balance sm:text-5xl">
           {hello.text}
           {firstName ? `, ${firstName}` : ""}.
         </h1>
@@ -101,6 +103,7 @@ export const TodayPage = (p: TodayProps) => {
                 : `${todayLeft} session${todayLeft === 1 ? "" : "s"} to go today.`}
           {overdue ? ` ${overdue} thing${overdue === 1 ? " is" : "s are"} overdue, though.` : ""}
         </p>
+        <FloralRule class="pt-3" />
       </header>
 
       {!p.semester || !p.hasSubjects ? (

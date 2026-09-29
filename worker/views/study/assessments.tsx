@@ -246,7 +246,7 @@ export const ExamCard = ({
       <div class={`absolute inset-y-0 left-0 w-1.5 ${colourOf(subject?.colour).bar}`}></div>
       <div class="flex gap-4 p-4 pl-6">
         {/* A little tear-off calendar page: the date is the point of an exam card. */}
-        <div class="flex w-14 shrink-0 flex-col items-center overflow-hidden rounded-xl border bg-background text-center">
+        <div class="flex w-14 shrink-0 flex-col items-center overflow-hidden rounded-xl border bg-background text-center shadow-xs">
           <span class="w-full bg-primary/10 py-0.5 text-tiny font-semibold uppercase tracking-wider text-primary">
             {new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(
               new Date(`${e.date}T00:00:00Z`),

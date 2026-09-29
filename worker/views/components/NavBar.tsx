@@ -1,5 +1,6 @@
 import { html } from "hono/html";
 import { PropsUser } from "@server/schema/auth.schema";
+import { Blossom } from "../study/florals";
 
 // --- CONFIGURATION ---
 /**
@@ -195,28 +196,26 @@ export const NavBar = ({ appName, user, currentPath }: NavBarProps) => {
   };
 
   return html`
-    <header
-      class="fixed top-0 left-0 right-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-    >
+    <header class="scalloped fixed top-0 left-0 right-0 z-40 w-full bg-card">
       <div class="flex h-14 items-center justify-between px-4">
         <div class="flex items-center gap-4">
-          <a href="/" class="flex h-11 items-center gap-2 font-serif text-lg font-semibold">
-            <span
-              class="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground"
-            >
-              <i data-lucide="sprout" class="h-4 w-4"></i>
+          <a href="/" class="flex h-11 items-center gap-2 font-serif text-xl font-medium">
+            <span class="flex h-9 w-9 items-center justify-center rounded-full border bg-secondary">
+              ${Blossom({ class: "h-5 w-5" })}
             </span>
-            ${appName}
+            <span class="italic tracking-tight">${appName}</span>
           </a>
 
-          <nav class="hidden xl:flex items-center gap-0.5">
+          <nav class="hidden xl:flex items-center gap-1">
             ${menuItems.map(
               (item) => html`
                 <a
                   href="${item.to}"
                   aria-current="${isActive(item.to) ? "page" : "false"}"
-                  class="inline-flex h-9 items-center rounded-lg px-3 text-sm font-medium transition-colors hover:text-primary ${
-                    isActive(item.to) ? "bg-primary/10 text-primary" : "text-muted-foreground"
+                  class="inline-flex h-11 items-center px-2.5 text-[0.95rem] font-semibold transition-colors hover:text-primary ${
+                    isActive(item.to)
+                      ? "text-primary underline decoration-wavy decoration-primary/60 decoration-[1.5px] underline-offset-[7px]"
+                      : "text-muted-foreground"
                   }"
                 >
                   ${item.name}
@@ -260,11 +259,9 @@ export const NavBar = ({ appName, user, currentPath }: NavBarProps) => {
       class="hidden fixed inset-0 z-[100] bg-background text-foreground xl:hidden flex flex-col animate-in slide-in-from-right-10 duration-200"
     >
       <div class="flex items-center justify-between px-4 h-14 border-b">
-        <span class="font-serif font-semibold text-lg flex items-center gap-2">
-          <span
-            class="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground"
-          >
-            <i data-lucide="sprout" class="h-4 w-4"></i>
+        <span class="font-serif italic text-xl flex items-center gap-2">
+          <span class="flex h-9 w-9 items-center justify-center rounded-full border bg-secondary">
+            ${Blossom({ class: "h-5 w-5" })}
           </span>
           Menu
         </span>
@@ -283,8 +280,8 @@ export const NavBar = ({ appName, user, currentPath }: NavBarProps) => {
             (item) => html`
               <a
                 href="${item.to}"
-                class="flex items-center gap-3 py-3 px-4 rounded-xl text-base font-medium transition-colors hover:bg-accent ${
-                  isActive(item.to) ? "bg-primary/10 text-primary" : "text-muted-foreground"
+                class="flex items-center gap-3 py-3 px-4 rounded-full text-base font-semibold transition-colors hover:bg-accent ${
+                  isActive(item.to) ? "bg-accent text-accent-foreground" : "text-muted-foreground"
                 }"
               >
                 <i data-lucide="${item.icon}" class="h-5 w-5"></i>

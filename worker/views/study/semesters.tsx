@@ -23,6 +23,7 @@ import {
   TEXTAREA,
   colourOf,
 } from "./ui";
+import { Blossom } from "./florals";
 import { formatDate, formatDay, formatPercent, relativeDay } from "./format";
 
 interface SemesterPageProps {
@@ -185,16 +186,21 @@ export const SemesterPage = ({
                   href={`/subjects/${s.id}`}
                   class={`${CARD} group relative block overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md`}
                 >
-                  <div class={`h-2 ${colour.bar}`}></div>
-                  <div class="space-y-3 p-5">
-                    <div class="flex items-start justify-between gap-2">
+                  {/* A pressed flower in the subject's colour, peeking in. */}
+                  <Blossom
+                    class="pointer-events-none absolute -right-3 -top-3 h-16 w-16 rotate-12 opacity-70 transition-transform duration-500 group-hover:rotate-45"
+                    petal={colour.fill}
+                  />
+                  <div class={`absolute inset-y-5 left-0 w-1 rounded-r-full ${colour.bar}`}></div>
+                  <div class="space-y-3 p-5 pl-6">
+                    <div class="flex items-start justify-between gap-2 pr-9">
                       <div class="min-w-0">
                         {s.code ? (
                           <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                             {s.code}
                           </p>
                         ) : null}
-                        <h3 class="font-serif text-lg font-semibold leading-snug">{s.name}</h3>
+                        <h3 class="font-serif text-xl font-medium leading-snug">{s.name}</h3>
                       </div>
                       {result.percent !== null ? (
                         <Badge tone="success">
