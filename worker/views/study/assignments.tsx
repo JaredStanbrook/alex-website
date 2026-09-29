@@ -90,12 +90,10 @@ export const AssignmentListPage = ({
   return (
     <Page
       title="Assignments"
-      eyebrow="Deadlines"
-      eyebrowIcon="clipboard-list"
       subtitle={
         open.length === 0
           ? "Nothing outstanding. Enjoy the breathing room."
-          : `${open.length} to go${overdue.length ? ` · ${overdue.length} overdue` : ""}`
+          : `${open.length} still to hand in${overdue.length ? `, ${overdue.length} of them overdue` : ""}.`
       }
       actions={
         hasSubjects ? (

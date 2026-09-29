@@ -29,14 +29,14 @@ const PublicSections = ({ content }: { content: PublicContent }) => {
             {sets.map((s) => (
               <a
                 href={`/public/flashcards/${s.id}/study`}
-                class={`${CARD} flex flex-col gap-1 p-5 transition-all hover:-translate-y-0.5 hover:shadow-md`}
+                class={`${CARD} flex flex-col gap-1 p-5`}
               >
-                <span class="font-serif text-lg font-semibold">{s.title}</span>
+                <span class="font-serif text-[1.35rem]">{s.title}</span>
                 {s.description ? (
                   <span class="line-clamp-2 text-sm text-muted-foreground">{s.description}</span>
                 ) : null}
                 <span class="mt-2 inline-flex items-center gap-1 text-sm font-medium text-primary">
-                  Flip through <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                  Flip through
                 </span>
               </a>
             ))}
@@ -48,10 +48,7 @@ const PublicSections = ({ content }: { content: PublicContent }) => {
         <Section title="Notes" icon="notebook-pen">
           <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {notes.map((n) => (
-              <a
-                href={`/public/notes/${n.id}`}
-                class={`${CARD} flex flex-col gap-2 p-5 transition-all hover:-translate-y-0.5 hover:shadow-md`}
-              >
+              <a href={`/public/notes/${n.id}`} class={`${CARD} flex flex-col gap-2 p-5`}>
                 <span class="font-medium">{n.title}</span>
                 {n.body ? (
                   <span class="line-clamp-3 text-sm text-muted-foreground whitespace-pre-line">
@@ -103,15 +100,13 @@ export const PublicHome = ({
   content: PublicContent;
   signedIn: boolean;
 }) => (
-  <div class="mx-auto w-full max-w-5xl space-y-12 px-4 pb-20 pt-12 sm:px-6 sm:pt-16 animate-in fade-in duration-300">
+  <div class="mx-auto w-full max-w-5xl space-y-12 px-4 pb-20 pt-12 sm:px-6 sm:pt-16">
     <section class="space-y-4 text-center">
       <div class="relative mx-auto flex h-32 w-32 items-center justify-center">
         <Wreath class="absolute inset-0 h-full w-full" />
         <Blossom class="relative -mt-2 h-12 w-12" petal="fill-chart-5" />
       </div>
-      <h1 class="font-serif text-5xl font-medium italic tracking-tight text-balance sm:text-6xl">
-        {app.name}
-      </h1>
+      <h1 class="font-serif text-5xl text-balance sm:text-6xl">{app.name}</h1>
       {app.tagline ? (
         <p class="mx-auto max-w-xl text-lg text-muted-foreground text-balance">{app.tagline}</p>
       ) : null}
@@ -130,10 +125,8 @@ export const PublicHome = ({
 
 export const PublicIndexPage = ({ app, content }: { app: AppConfig; content: PublicContent }) => (
   <Page
-    title="Shared stuff"
-    eyebrow={app.name}
-    eyebrowIcon="leaf"
-    subtitle="Notes, links and flashcards shared publicly. Take what's useful."
+    title="Shared notes and flashcards"
+    subtitle={`Everything the owner of ${app.name} has chosen to share. Help yourself.`}
   >
     <PublicSections content={content} />
   </Page>
@@ -148,7 +141,7 @@ export const PublicNotePage = ({
 }) => (
   <Page
     title={note.title}
-    back={{ href: "/public", label: "Shared stuff" }}
+    back={{ href: "/public", label: "Shared notes" }}
     width="narrow"
     subtitle={`Updated ${formatDateShort(note.updatedAt, locale)}`}
   >
@@ -163,7 +156,7 @@ export const PublicNotePage = ({
     </article>
     <div class="flex flex-wrap gap-2">
       <a href="/public" class={BTN_OUTLINE}>
-        <i data-lucide="arrow-left" class="h-4 w-4"></i> More shared stuff
+        <i data-lucide="arrow-left" class="h-4 w-4"></i> More shared notes
       </a>
       <a href="/" class={BTN_PRIMARY}>
         Home

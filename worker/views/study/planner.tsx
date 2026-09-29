@@ -39,7 +39,7 @@ const timeRange = (s: SelectStudySession, locale: string) => {
         : formatTime(s.startTime, locale),
     );
   if (minutes) parts.push(formatMinutes(minutes));
-  return parts.join(" · ") || "Any time";
+  return parts.join(", ") || "Any time";
 };
 
 // ==========================================
@@ -91,12 +91,12 @@ export const SessionCard = ({
           {s.title}
         </h3>
         <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-          {showDate ? <span>{formatDay(s.date, locale)} ·</span> : null}
+          {showDate ? <span>{formatDay(s.date, locale)},</span> : null}
           <span class="inline-flex items-center gap-1">
             <i data-lucide="clock" class="h-3 w-3"></i>
             {timeRange(s, locale)}
           </span>
-          {skipped ? <span>· skipped</span> : null}
+          {skipped ? <span>(skipped)</span> : null}
         </p>
         {about ? (
           <a
@@ -145,12 +145,10 @@ export const PlannerPage = ({ weekStart, today, sessions, aboutOf, locale }: Pla
   return (
     <Page
       title="Planner"
-      eyebrow={isThisWeek ? "This week" : `Week of ${formatDay(weekStart, locale)}`}
-      eyebrowIcon="calendar-days"
       subtitle={
         counted.length === 0
-          ? "A blank week. Pencil in a session or two?"
-          : `${done.length} of ${counted.length} sessions done${minutesDone ? ` · ${formatMinutes(minutesDone)} studied` : ""}`
+          ? `${isThisWeek ? "Nothing planned this week yet." : `Nothing planned for the week of ${formatDay(weekStart, locale)}.`}`
+          : `${isThisWeek ? "This week" : `The week of ${formatDay(weekStart, locale)}`}: ${done.length} of ${counted.length} sessions done${minutesDone ? `, ${formatMinutes(minutesDone)} of study` : ""}.`
       }
       actions={
         <a href={`/planner/new?date=${isThisWeek ? today : weekStart}`} class={BTN_PRIMARY}>
@@ -238,9 +236,7 @@ export const AboutSelect = ({
     <select id="about" name="about" class={SELECT}>
       <option value="">Just studying</option>
       {groups.map((g) => (
-        <optgroup
-          label={`${g.subject.code || g.subject.name}${g.subject.code ? ` · ${g.subject.name}` : ""}`}
-        >
+        <optgroup label={g.subject.code ? `${g.subject.code}: ${g.subject.name}` : g.subject.name}>
           <option
             value={`subject:${g.subject.id}`}
             selected={selected === `subject:${g.subject.id}`}

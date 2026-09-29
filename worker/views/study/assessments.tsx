@@ -68,7 +68,7 @@ export const MarkBadge = ({ a }: { a: Pick<SelectAssignment, "mark" | "maxMark" 
   const band = bandFor(pct);
   return (
     <Badge tone={band.points > 0 ? "success" : "danger"} icon="star">
-      {a.maxMark ? `${formatNumber(a.mark!)}/${formatNumber(a.maxMark)} · ` : ""}
+      {a.maxMark ? `${formatNumber(a.mark!)}/${formatNumber(a.maxMark)}, ` : ""}
       {formatPercent(pct)} {band.short}
     </Badge>
   );
@@ -126,7 +126,7 @@ export const AssignmentCard = ({
                   Due {relativeDay(a.dueDate, today)}
                 </Badge>
               ) : isOpen(a) ? (
-                <span>· {relativeDay(a.dueDate, today)}</span>
+                <span>({relativeDay(a.dueDate, today)})</span>
               ) : null}
             </p>
           </div>
@@ -175,40 +175,56 @@ export const AssignmentCard = ({
   );
 };
 
-/** A compact one-line version for the Today screen and subject summaries. */
-export const AssignmentLine = ({
-  a,
+/**
+ * One line of the "Coming up" ledger on Today: the date in the margin, what is
+ * due, and how far off it is. Assignments and exams share it so they can be
+ * read as one list in date order.
+ */
+export const DueLine = ({
+  href,
+  title,
+  what,
   subject,
+  date,
   today,
   locale,
+  open = true,
 }: {
-  a: SelectAssignment;
+  href: string;
+  title: string;
+  /** "Lab report due", "Exam at 9:30 am"… */
+  what: string;
   subject?: SubjectLite;
+  date: string;
   today: string;
   locale: string;
+  /** Only unfinished work can be overdue. */
+  open?: boolean;
 }) => {
-  const days = daysUntil(a.dueDate, today);
+  const days = daysUntil(date, today);
+  const late = open && days < 0;
   return (
     <a
-      href={`/assignments#assignment-${a.id}`}
-      class="flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 hover:bg-accent/60"
+      href={href}
+      class="grid min-h-11 grid-cols-[4rem_1fr] items-baseline gap-x-3 gap-y-0.5 px-4 py-3 hover:bg-accent/50 sm:grid-cols-[4.5rem_1fr_auto]"
     >
-      <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-secondary-foreground">
-        <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+      <span class="text-[0.95rem] leading-tight text-muted-foreground">
+        {formatDay(date, locale)}
       </span>
-      <span class="min-w-0 flex-1">
-        <span class="block truncate text-sm font-medium">{a.title}</span>
-        <span class="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <span class="min-w-0">
+        <span class="block truncate font-bold">{title}</span>
+        <span class="flex items-center gap-1.5 text-[0.95rem] text-muted-foreground">
           {subject ? <Dot colour={subject.colour} class="h-2 w-2" /> : null}
-          {subject ? `${subject.code || subject.name} · ` : ""}
-          {STATUS_LABEL[a.status]}
+          <span class="truncate">
+            {subject ? `${subject.code || subject.name}: ` : ""}
+            {what}
+          </span>
         </span>
       </span>
       <span
-        class={`shrink-0 text-right text-xs font-medium ${isOpen(a) && days < 0 ? "text-destructive" : isOpen(a) && days <= 3 ? "text-foreground" : "text-muted-foreground"}`}
+        class={`col-start-2 text-[0.95rem] sm:col-start-auto sm:text-right ${late ? "font-bold text-destructive" : days <= 3 ? "font-bold" : "text-muted-foreground"}`}
       >
-        {formatDay(a.dueDate, locale)}
-        <span class="block font-normal text-muted-foreground">{relativeDay(a.dueDate, today)}</span>
+        {late ? `${-days} day${days === -1 ? "" : "s"} late` : relativeDay(date, today)}
       </span>
     </a>
   );
@@ -247,14 +263,12 @@ export const ExamCard = ({
       <div class="flex gap-4 p-4 pl-6">
         {/* A little tear-off calendar page: the date is the point of an exam card. */}
         <div class="flex w-14 shrink-0 flex-col items-center overflow-hidden rounded-xl border bg-background text-center shadow-xs">
-          <span class="w-full bg-primary/10 py-0.5 text-tiny font-semibold uppercase tracking-wider text-primary">
+          <span class="w-full bg-primary/10 py-0.5 text-xs font-bold text-primary">
             {new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(
               new Date(`${e.date}T00:00:00Z`),
             )}
           </span>
-          <span class="py-1 font-serif text-2xl font-semibold leading-none">
-            {Number(e.date.slice(8, 10))}
-          </span>
+          <span class="py-1 font-serif text-2xl leading-none">{Number(e.date.slice(8, 10))}</span>
         </div>
 
         <div class="min-w-0 flex-1 space-y-2">
@@ -264,15 +278,15 @@ export const ExamCard = ({
               <h3 class="font-medium leading-snug">{e.title}</h3>
               <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
                 <span>{formatDay(e.date, locale)}</span>
-                {e.time ? <span>· {formatTime(e.time, locale)}</span> : null}
+                {e.time ? <span>at {formatTime(e.time, locale)}</span> : null}
                 {past ? (
-                  <span>· done</span>
+                  <span>(sat)</span>
                 ) : days <= 7 ? (
                   <Badge tone="warning" icon="hourglass">
                     {relativeDay(e.date, today)}
                   </Badge>
                 ) : (
-                  <span>· {relativeDay(e.date, today)}</span>
+                  <span>({relativeDay(e.date, today)})</span>
                 )}
               </p>
             </div>
@@ -324,7 +338,7 @@ export const SubjectSelect = ({
         <optgroup label={g.semesterName}>
           {g.subjects.map((s) => (
             <option value={String(s.id)} selected={s.id === selected}>
-              {s.code ? `${s.code} · ` : ""}
+              {s.code ? `${s.code}: ` : ""}
               {s.name}
             </option>
           ))}

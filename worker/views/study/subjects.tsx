@@ -42,8 +42,8 @@ interface SubjectPageProps {
 
 const Stat = ({ label, value, hint }: { label: string; value: string; hint?: string }) => (
   <div class="min-w-0">
-    <p class="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
-    <p class="font-serif text-2xl font-semibold tabular-nums">{value}</p>
+    <p class="text-sm text-muted-foreground">{label}</p>
+    <p class="font-serif text-2xl tabular-nums">{value}</p>
     {hint ? <p class="text-xs text-muted-foreground">{hint}</p> : null}
   </div>
 );
@@ -61,7 +61,7 @@ export const MaterialList = ({ items }: { items: Material[] }) => (
       if (own.length === 0) return null;
       return (
         <div class="space-y-1">
-          <p class="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <p class="flex items-center gap-1.5 text-sm font-bold text-muted-foreground">
             <i data-lucide={MATERIAL_META[type].icon} class="h-3.5 w-3.5"></i>
             {MATERIAL_META[type].label}
           </p>
@@ -146,7 +146,7 @@ export const SubjectPage = ({
                 result.source === "final"
                   ? "Final"
                   : result.source === "estimate"
-                    ? `So far · ${formatNumber(result.weightMarked)}% marked`
+                    ? `So far, from ${formatNumber(result.weightMarked)}% of the marks`
                     : "No marks yet"
               }
             />
@@ -239,9 +239,7 @@ export const SubjectPage = ({
                   <SessionCard s={x} about={aboutOf(x)} locale={locale} showDate />
                 ))}
                 {recentSessions.length ? (
-                  <p class="pt-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    Recently done
-                  </p>
+                  <p class="pt-2 text-sm font-bold text-muted-foreground">Recently done</p>
                 ) : null}
                 {recentSessions.map((x) => (
                   <SessionCard s={x} about={aboutOf(x)} locale={locale} showDate />

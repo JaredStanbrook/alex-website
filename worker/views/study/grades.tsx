@@ -24,15 +24,15 @@ interface Props {
 
 const GpaDial = ({ gpa, label }: { gpa: Gpa; label: string }) => (
   <div class="min-w-0">
-    <p class="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
-    <p class="font-serif text-4xl font-semibold tabular-nums">
+    <p class="text-sm text-muted-foreground">{label}</p>
+    <p class="font-serif text-4xl tabular-nums">
       {gpa.value === null ? "—" : gpa.value.toFixed(2)}
       <span class="text-base font-normal text-muted-foreground"> / {GPA_MAX}</span>
     </p>
     <p class="text-xs text-muted-foreground">
       {gpa.value === null
         ? "No grades yet"
-        : `${formatNumber(gpa.credits)} credit${gpa.credits === 1 ? "" : "s"}${gpa.provisional ? " · includes estimates" : ""}`}
+        : `${formatNumber(gpa.credits)} credit${gpa.credits === 1 ? "" : "s"}${gpa.provisional ? ", some still estimates" : ""}`}
     </p>
   </div>
 );
@@ -42,7 +42,7 @@ const ResultBadge = ({ result }: { result: SubjectResult }) =>
     <Badge>No marks yet</Badge>
   ) : (
     <Badge tone={result.band!.points > 0 ? "success" : "danger"}>
-      {formatPercent(result.percent)} · {result.band!.short}
+      {formatPercent(result.percent)} {result.band!.short}
       {result.source === "estimate" ? " so far" : ""}
     </Badge>
   );
@@ -76,7 +76,7 @@ const MarkRow = ({
         </p>
       </div>
       <div class="col-span-2 grid grid-cols-3 gap-1.5 sm:col-span-1">
-        <label class="space-y-0.5 text-tiny font-medium uppercase tracking-wider text-muted-foreground">
+        <label class="space-y-0.5 text-sm text-muted-foreground">
           <span>Mark</span>
           <input
             name="mark"
@@ -88,7 +88,7 @@ const MarkRow = ({
             class={NUM}
           />
         </label>
-        <label class="space-y-0.5 text-tiny font-medium uppercase tracking-wider text-muted-foreground">
+        <label class="space-y-0.5 text-sm text-muted-foreground">
           <span>Out of</span>
           <input
             name="maxMark"
@@ -100,7 +100,7 @@ const MarkRow = ({
             class={NUM}
           />
         </label>
-        <label class="space-y-0.5 text-tiny font-medium uppercase tracking-wider text-muted-foreground">
+        <label class="space-y-0.5 text-sm text-muted-foreground">
           <span>Weight %</span>
           <input
             name="weight"
@@ -136,8 +136,6 @@ export const GradesPage = ({ semesters, subjects, assignments, exams }: Props) =
   return (
     <Page
       title="Grades"
-      eyebrow="How it's going"
-      eyebrowIcon="trophy"
       subtitle="Enter marks as they come back. Grades are estimated until a final mark is in."
     >
       {subjects.length === 0 ? (
@@ -183,7 +181,7 @@ export const GradesPage = ({ semesters, subjects, assignments, exams }: Props) =
             return (
               <section class="space-y-3">
                 <div class="flex flex-wrap items-end justify-between gap-2">
-                  <h2 class="font-serif text-xl font-semibold">{sem.name}</h2>
+                  <h2 class="font-serif text-[1.35rem]">{sem.name}</h2>
                   <p class="text-sm text-muted-foreground">
                     Semester GPA{" "}
                     <span class="font-semibold text-foreground tabular-nums">
@@ -209,7 +207,7 @@ export const GradesPage = ({ semesters, subjects, assignments, exams }: Props) =
                           <span class="min-w-0 flex-1">
                             <span class="block truncate font-medium">{s.name}</span>
                             <span class="text-xs text-muted-foreground">
-                              {s.code ? `${s.code} · ` : ""}
+                              {s.code ? `${s.code}, ` : ""}
                               {formatNumber(s.credits)} credit{s.credits === 1 ? "" : "s"}
                             </span>
                           </span>

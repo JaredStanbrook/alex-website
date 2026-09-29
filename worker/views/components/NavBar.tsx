@@ -199,11 +199,11 @@ export const NavBar = ({ appName, user, currentPath }: NavBarProps) => {
     <header class="scalloped fixed top-0 left-0 right-0 z-40 w-full bg-card">
       <div class="flex h-14 items-center justify-between px-4">
         <div class="flex items-center gap-4">
-          <a href="/" class="flex h-11 items-center gap-2 font-serif text-xl font-medium">
+          <a href="/" class="flex h-11 items-center gap-2.5 font-serif text-[1.4rem]">
             <span class="flex h-9 w-9 items-center justify-center rounded-full border bg-secondary">
               ${Blossom({ class: "h-5 w-5" })}
             </span>
-            <span class="italic tracking-tight">${appName}</span>
+            <span>${appName}</span>
           </a>
 
           <nav class="hidden xl:flex items-center gap-1">
@@ -259,7 +259,7 @@ export const NavBar = ({ appName, user, currentPath }: NavBarProps) => {
       class="hidden fixed inset-0 z-[100] bg-background text-foreground xl:hidden flex flex-col animate-in slide-in-from-right-10 duration-200"
     >
       <div class="flex items-center justify-between px-4 h-14 border-b">
-        <span class="font-serif italic text-xl flex items-center gap-2">
+        <span class="font-serif text-[1.4rem] flex items-center gap-2.5">
           <span class="flex h-9 w-9 items-center justify-center rounded-full border bg-secondary">
             ${Blossom({ class: "h-5 w-5" })}
           </span>

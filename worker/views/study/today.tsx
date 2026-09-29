@@ -9,11 +9,11 @@ import type { SelectStudySession } from "@server/schema/study-session.schema";
 import type { LinkItemType } from "@server/schema/content-link.schema";
 import { sessionMinutes, type AboutLabel } from "@server/services/study.service";
 import { daysUntil } from "@server/lib/dates";
-import { AssignmentLine, type SubjectLite } from "./assessments";
+import { DueLine, STATUS_LABEL, type SubjectLite } from "./assessments";
 import { SessionCard } from "./planner";
-import { BTN_OUTLINE, BTN_PRIMARY, CARD, Dot, EmptyState, ProgressBar, Section } from "./ui";
-import { FloralRule, Sprig } from "./florals";
-import { formatDay, formatMinutes, formatTime, formatWeekday, relativeDay } from "./format";
+import { BTN_OUTLINE, BTN_PRIMARY, CARD, EmptyState, ProgressBar, Section } from "./ui";
+import { Bouquet } from "./florals";
+import { formatDay, formatMinutes, formatTime, formatWeekday } from "./format";
 
 export interface RecentItem {
   type: LinkItemType;
@@ -42,14 +42,14 @@ interface TodayProps {
 
 const greeting = (hour: number) =>
   hour < 5
-    ? { text: "Burning the midnight oil", icon: "moon" }
+    ? "Burning the midnight oil"
     : hour < 12
-      ? { text: "Good morning", icon: "coffee" }
+      ? "Good morning"
       : hour < 17
-        ? { text: "Good afternoon", icon: "sun" }
+        ? "Good afternoon"
         : hour < 21
-          ? { text: "Good evening", icon: "sunset" }
-          : { text: "Winding down", icon: "moon" };
+          ? "Good evening"
+          : "Winding down";
 
 const RECENT_ICON: Record<LinkItemType, string> = {
   note: "notebook-pen",
@@ -61,7 +61,7 @@ const QUICK_ACTIONS = [
   { href: "/planner/new", icon: "calendar-plus", label: "Plan a session" },
   { href: "/notes/new", icon: "notebook-pen", label: "Write a note" },
   { href: "/assignments/new", icon: "clipboard-list", label: "Add assignment" },
-  { href: "/flashcards", icon: "layers", label: "Flashcards" },
+  { href: "/flashcards", icon: "layers", label: "Study flashcards" },
   { href: "/resources/new", icon: "link", label: "Save a link" },
 ];
 
@@ -81,34 +81,38 @@ export const TodayPage = (p: TodayProps) => {
       : null;
 
   return (
-    <div class="mx-auto w-full max-w-5xl space-y-8 px-4 pb-20 pt-8 sm:px-6 sm:pt-10 animate-in fade-in duration-300">
-      <header class="relative space-y-2">
-        <Sprig class="pointer-events-none absolute -top-2 right-0 hidden h-24 w-48 -scale-x-100 md:block" />
-        <p class="flex items-center gap-1.5 font-hand text-2xl leading-none text-primary">
-          <i data-lucide={hello.icon} class="h-4 w-4"></i>
-          {formatWeekday(p.today, p.locale)}, {formatDay(p.today, p.locale).replace(/^\S+\s/, "")}
-          {p.semester ? ` · ${p.semester.name}${semesterWeek ? `, week ${semesterWeek}` : ""}` : ""}
-        </p>
-        <h1 class="font-serif text-4xl font-medium tracking-tight text-balance sm:text-5xl">
-          {hello.text}
-          {firstName ? `, ${firstName}` : ""}.
-        </h1>
-        <p class="text-muted-foreground">
-          {!p.semester
-            ? "Welcome to your study nook. Let's get you set up."
-            : todays.length === 0
-              ? "Nothing planned today. A good day to plan something — or rest."
-              : todayLeft === 0
-                ? "Everything for today is done. Lovely work."
-                : `${todayLeft} session${todayLeft === 1 ? "" : "s"} to go today.`}
-          {overdue ? ` ${overdue} thing${overdue === 1 ? " is" : "s are"} overdue, though.` : ""}
-        </p>
-        <FloralRule class="pt-3" />
+    <div class="mx-auto w-full max-w-5xl space-y-10 px-4 pb-20 pt-6 sm:px-6 sm:pt-10">
+      {/* The one bold moment in the app: the greeting set large in the display
+          face, beside a hand-tied bouquet that draws itself in on arrival. */}
+      <header class="grid grid-cols-[1fr_7rem] items-center gap-2 sm:grid-cols-[1fr_15rem] sm:gap-8">
+        <div class="min-w-0 space-y-3">
+          <p class="text-lg text-muted-foreground">
+            {formatWeekday(p.today, p.locale)} {formatDay(p.today, p.locale).replace(/^\S+\s/, "")}
+            {p.semester && semesterWeek ? `, week ${semesterWeek} of ${p.semester.name}` : ""}
+          </p>
+          <h1 class="font-serif text-[2.25rem] leading-[1.05] text-balance sm:text-6xl">
+            {hello}
+            {firstName ? `, ${firstName}` : ""}.
+          </h1>
+          <p class="max-w-xl text-lg leading-snug">
+            {!p.semester
+              ? "Start by adding your semester, and the rest of the book fills in from there."
+              : todays.length === 0
+                ? "Nothing is planned for today."
+                : todayLeft === 0
+                  ? "Everything planned for today is done."
+                  : `${todayLeft === 1 ? "One session" : `${todayLeft} sessions`} left today.`}
+            {overdue
+              ? ` ${overdue === 1 ? "One assignment is" : `${overdue} assignments are`} overdue.`
+              : ""}
+          </p>
+        </div>
+        <Bouquet class="h-36 w-28 justify-self-end sm:h-72 sm:w-60" />
       </header>
 
       {!p.semester || !p.hasSubjects ? (
         <div class={`${CARD} space-y-4 p-6`}>
-          <h2 class="font-serif text-xl font-semibold">Getting started</h2>
+          <h2 class="font-serif text-[1.35rem]">Getting started</h2>
           <ol class="space-y-3 text-sm">
             <li class="flex items-center gap-3">
               <span
@@ -192,42 +196,42 @@ export const TodayPage = (p: TodayProps) => {
                 body="No deadlines in the next two weeks."
               />
             ) : (
-              <div class={`${CARD} divide-y p-1`}>
-                {p.assignments.map((a) => (
-                  <AssignmentLine
-                    a={a}
-                    subject={p.subjects.get(a.subjectId)}
-                    today={p.today}
-                    locale={p.locale}
-                  />
-                ))}
-                {p.exams.map((e) => {
-                  const subject = p.subjects.get(e.subjectId);
-                  return (
-                    <a
-                      href={`/exams#exam-${e.id}`}
-                      class="flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 hover:bg-accent/60"
-                    >
-                      <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                        <i data-lucide="graduation-cap" class="h-4 w-4"></i>
-                      </span>
-                      <span class="min-w-0 flex-1">
-                        <span class="block truncate text-sm font-medium">{e.title}</span>
-                        <span class="flex items-center gap-1.5 text-xs text-muted-foreground">
-                          {subject ? <Dot colour={subject.colour} class="h-2 w-2" /> : null}
-                          {subject ? `${subject.code || subject.name} · ` : ""}Exam
-                          {e.time ? ` at ${formatTime(e.time, p.locale)}` : ""}
-                        </span>
-                      </span>
-                      <span class="shrink-0 text-right text-xs font-medium">
-                        {formatDay(e.date, p.locale)}
-                        <span class="block font-normal text-muted-foreground">
-                          {relativeDay(e.date, p.today)}
-                        </span>
-                      </span>
-                    </a>
-                  );
-                })}
+              <div class={`${CARD} divide-y overflow-hidden`}>
+                {[
+                  ...p.assignments.map((a) => ({
+                    key: `a${a.id}`,
+                    date: a.dueDate,
+                    line: (
+                      <DueLine
+                        href={`/assignments#assignment-${a.id}`}
+                        title={a.title}
+                        what={STATUS_LABEL[a.status].toLowerCase()}
+                        subject={p.subjects.get(a.subjectId)}
+                        date={a.dueDate}
+                        today={p.today}
+                        locale={p.locale}
+                      />
+                    ),
+                  })),
+                  ...p.exams.map((e) => ({
+                    key: `e${e.id}`,
+                    date: e.date,
+                    line: (
+                      <DueLine
+                        href={`/exams#exam-${e.id}`}
+                        title={e.title}
+                        what={`exam${e.time ? ` at ${formatTime(e.time, p.locale)}` : ""}`}
+                        subject={p.subjects.get(e.subjectId)}
+                        date={e.date}
+                        today={p.today}
+                        locale={p.locale}
+                        open={false}
+                      />
+                    ),
+                  })),
+                ]
+                  .sort((x, y) => x.date.localeCompare(y.date))
+                  .map((row) => row.line)}
               </div>
             )}
           </Section>
@@ -236,35 +240,23 @@ export const TodayPage = (p: TodayProps) => {
         <aside class="min-w-0 space-y-8">
           <Section title="This week" icon="sprout">
             <div class={`${CARD} space-y-3 p-5`}>
-              <div class="flex items-end justify-between gap-2">
-                <p class="font-serif text-3xl font-semibold tabular-nums">
-                  {weekDone.length}
-                  <span class="text-base font-normal text-muted-foreground">
-                    {" "}
-                    / {weekCounted.length} sessions
-                  </span>
-                </p>
-                {minutes ? (
-                  <p class="text-sm text-muted-foreground">{formatMinutes(minutes)}</p>
-                ) : null}
-              </div>
-              <ProgressBar
-                value={weekDone.length}
-                max={weekCounted.length}
-                label="Sessions done this week"
-              />
-              <p class="text-xs text-muted-foreground">
+              <p class="text-lg leading-snug">
                 {weekCounted.length === 0
-                  ? "No sessions planned this week yet."
-                  : weekDone.length === weekCounted.length
-                    ? "Every planned session done. Take a bow."
-                    : "Little and often wins the semester."}
+                  ? "No sessions planned yet this week."
+                  : `${weekDone.length} of ${weekCounted.length} planned sessions done${minutes ? `, ${formatMinutes(minutes)} of study` : ""}.`}
               </p>
+              {weekCounted.length ? (
+                <ProgressBar
+                  value={weekDone.length}
+                  max={weekCounted.length}
+                  label="Sessions done this week"
+                />
+              ) : null}
               <a
                 href={`/planner?week=${p.weekStart}`}
-                class="inline-flex h-11 items-center gap-1 text-sm font-medium text-primary hover:underline"
+                class="-ml-3 inline-flex h-11 items-center rounded-full px-3 font-bold text-primary hover:bg-accent"
               >
-                Open planner <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                Open the planner
               </a>
             </div>
             {p.learningCards ? (
@@ -272,9 +264,7 @@ export const TodayPage = (p: TodayProps) => {
                 href="/flashcards"
                 class={`${CARD} flex items-center gap-3 p-4 hover:bg-accent/40`}
               >
-                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-secondary-foreground">
-                  <i data-lucide="layers" class="h-5 w-5"></i>
-                </span>
+                <i data-lucide="layers" class="h-5 w-5 text-primary"></i>
                 <span class="text-sm">
                   <span class="font-medium">
                     {p.learningCards} flashcard{p.learningCards === 1 ? "" : "s"}
@@ -286,12 +276,9 @@ export const TodayPage = (p: TodayProps) => {
           </Section>
 
           <Section title="Quick add" icon="zap">
-            <div class="grid grid-cols-2 gap-2">
+            <div class="flex flex-wrap gap-2">
               {QUICK_ACTIONS.map((a) => (
-                <a
-                  href={a.href}
-                  class={`${CARD} flex min-h-11 items-center gap-2 px-3 py-3 text-sm font-medium hover:bg-accent/50`}
-                >
+                <a href={a.href} class={BTN_OUTLINE}>
                   <i data-lucide={a.icon} class="h-4 w-4 text-primary"></i>
                   {a.label}
                 </a>
@@ -299,7 +286,7 @@ export const TodayPage = (p: TodayProps) => {
             </div>
           </Section>
 
-          <Section title="Recently touched" icon="history">
+          <Section title="Recently edited" icon="history">
             {p.recent.length ? (
               <ul class={`${CARD} p-1`}>
                 {p.recent.map((r) => (

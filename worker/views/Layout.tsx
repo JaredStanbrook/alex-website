@@ -98,7 +98,7 @@ export const Layout: FC<LayoutProps> = (props) => {
 
         <footer class="mx-auto w-full max-w-5xl px-4 pb-10 pt-4 sm:px-6">
           ${FloralRule({ class: "mb-4" })}
-          <p class="text-center font-serif text-sm italic text-muted-foreground">
+          <p class="text-center text-sm text-muted-foreground">
             ${props.app.tagline || props.app.name}
           </p>
         </footer>

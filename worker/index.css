@@ -2,147 +2,150 @@
 @import "tw-animate-css";
 
 /* Self-hosted through npm (fontsource), so there is no font CDN at runtime:
-   the woff2 files are bundled by Vite and served from our own origin.
-   Fraunces "soft" is the vintage display face, Nunito the rounded body face,
-   Caveat the handwriting used for small margin notes. */
-@import "@fontsource-variable/fraunces/soft.css";
-@import "@fontsource-variable/fraunces/soft-italic.css";
-@import "@fontsource-variable/nunito/index.css";
-@import "@fontsource/caveat/500.css";
-@import "@fontsource/caveat/700.css";
+   Vite bundles the woff2 files and serves them from our own origin.
+   Two faces, clearly distinct (see docs/design.md):
+   Yeseva One — a soft Didone, for titles only, never below 21px.
+   Alegreya Sans — a calligraphic humanist sans, for everything else. */
+@import "@fontsource/yeseva-one/400.css";
+@import "@fontsource/alegreya-sans/400.css";
+@import "@fontsource/alegreya-sans/400-italic.css";
+@import "@fontsource/alegreya-sans/500.css";
+@import "@fontsource/alegreya-sans/700.css";
 
-/* LIGHT: "Pressed flowers"
-   Parchment paper, sepia ink, dusty rose, sage leaves, faded denim. */
+/* LIGHT: "The herbarium exercise book"
+   Eau-de-nil exercise-book paper, Prussian-blue fountain-pen ink, and flowers
+   pressed between the pages for every other colour. Deliberately not cream:
+   see docs/design.md for why. */
 :root {
-  /* Tells the browser to render native controls (checkboxes, radios,
-     scrollbars, date pickers) in the matching scheme. */
+  /* Tells the browser to render native controls in the matching scheme. */
   color-scheme: light;
 
-  --background: oklch(0.965 0.018 78); /* parchment */
-  --foreground: oklch(0.31 0.035 40); /* sepia ink */
-  --card: oklch(0.988 0.01 80); /* fresh writing paper */
-  --card-foreground: oklch(0.31 0.035 40);
-  --popover: oklch(0.988 0.01 80);
-  --popover-foreground: oklch(0.31 0.035 40);
+  --background: oklch(0.94 0.014 129); /* eau-de-nil page   #E8EDE3 */
+  --foreground: oklch(0.317 0.053 260); /* Prussian ink     #22324D */
+  --card: oklch(0.973 0.009 120); /* leaf paper             #F5F7F0 */
+  --card-foreground: oklch(0.317 0.053 260);
+  --popover: oklch(0.985 0.006 120);
+  --popover-foreground: oklch(0.317 0.053 260);
 
-  --primary: oklch(0.55 0.1 12); /* dusty old rose */
-  --primary-foreground: oklch(0.985 0.012 80);
+  --primary: oklch(0.538 0.113 4); /* madder rose           #A34F66 */
+  --primary-foreground: oklch(0.985 0.006 120);
 
-  --secondary: oklch(0.925 0.035 140); /* sage wash */
-  --secondary-foreground: oklch(0.37 0.055 145);
+  --secondary: oklch(0.905 0.03 125); /* olive wash */
+  --secondary-foreground: oklch(0.4 0.06 126);
 
-  --muted: oklch(0.935 0.02 75);
-  --muted-foreground: oklch(0.49 0.035 50);
+  --muted: oklch(0.915 0.016 128);
+  --muted-foreground: oklch(0.495 0.041 264); /* faded ink  #56627A */
 
-  --accent: oklch(0.935 0.03 18); /* blush */
-  --accent-foreground: oklch(0.36 0.06 15);
+  --accent: oklch(0.92 0.03 10); /* rose blush */
+  --accent-foreground: oklch(0.38 0.09 4);
 
-  --destructive: oklch(0.53 0.15 30); /* brick */
-  --destructive-foreground: oklch(0.985 0.01 80);
+  --destructive: oklch(0.52 0.16 28);
+  --destructive-foreground: oklch(0.985 0.006 120);
 
   /* Status roles, so a feature never has to reach for a raw palette colour. */
-  --success: oklch(0.5 0.09 145); /* deep sage */
-  --success-foreground: oklch(0.985 0.01 80);
-  --warning: oklch(0.83 0.11 85); /* mustard */
-  --warning-foreground: oklch(0.3 0.05 70);
+  --success: oklch(0.543 0.069 126); /* olive leaf          #65774A */
+  --success-foreground: oklch(0.985 0.006 120);
+  --warning: oklch(0.745 0.132 80); /* marigold             #D8A23C */
+  --warning-foreground: oklch(0.28 0.05 70);
 
-  --border: oklch(0.86 0.03 70); /* tan thread */
-  --input: oklch(0.84 0.03 70);
-  --ring: oklch(0.55 0.1 12);
+  --border: oklch(0.86 0.02 128); /* ruled-line green */
+  --input: oklch(0.8 0.025 128);
+  --ring: oklch(0.538 0.113 4);
 
-  /* Subject colours: rose, sage, denim, mustard, lavender. */
-  --chart-1: oklch(0.63 0.1 12);
-  --chart-2: oklch(0.6 0.075 145);
-  --chart-3: oklch(0.58 0.065 245);
-  --chart-4: oklch(0.76 0.11 82);
-  --chart-5: oklch(0.62 0.08 305);
+  /* The garden: rose, olive, cornflower, marigold, heather. */
+  --chart-1: oklch(0.6 0.11 4);
+  --chart-2: oklch(0.58 0.075 126);
+  --chart-3: oklch(0.569 0.093 261);
+  --chart-4: oklch(0.745 0.132 80);
+  --chart-5: oklch(0.568 0.089 309);
 
-  --sidebar: oklch(0.955 0.02 78);
-  --sidebar-foreground: oklch(0.31 0.035 40);
-  --sidebar-primary: oklch(0.55 0.1 12);
-  --sidebar-primary-foreground: oklch(0.985 0.012 80);
-  --sidebar-accent: oklch(0.935 0.03 18);
-  --sidebar-accent-foreground: oklch(0.36 0.06 15);
-  --sidebar-border: oklch(0.86 0.03 70);
-  --sidebar-ring: oklch(0.55 0.1 12);
+  --sidebar: oklch(0.973 0.009 120);
+  --sidebar-foreground: oklch(0.317 0.053 260);
+  --sidebar-primary: oklch(0.538 0.113 4);
+  --sidebar-primary-foreground: oklch(0.985 0.006 120);
+  --sidebar-accent: oklch(0.92 0.03 10);
+  --sidebar-accent-foreground: oklch(0.38 0.09 4);
+  --sidebar-border: oklch(0.86 0.02 128);
+  --sidebar-ring: oklch(0.538 0.113 4);
 
   --font-sans:
-    "Nunito Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif,
+    "Alegreya Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji";
-  --font-serif: "Fraunces Variable", ui-serif, Georgia, Cambria, "Times New Roman", serif;
-  --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  --font-serif: "Yeseva One", "Didot", "Bodoni 72", Georgia, serif;
   --font-mono:
     ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
-  --radius: 0.85rem; /* soft, rounded, a little old-fashioned */
+  /* Paper, not cards: a small radius. Pills are rounded-full on purpose. */
+  --radius: 0.5rem;
 
-  /* Warm sepia shadows, never grey. */
-  --shadow-2xs: 0 1px 2px hsl(30 30% 40% / 0.05);
-  --shadow-xs: 0 1px 3px hsl(30 30% 40% / 0.06);
-  --shadow-sm: 0 1px 2px hsl(30 30% 40% / 0.06), 0 4px 14px -6px hsl(30 35% 35% / 0.14);
-  --shadow: 0 1px 2px hsl(30 30% 40% / 0.06), 0 6px 18px -8px hsl(30 35% 35% / 0.16);
-  --shadow-md: 0 2px 4px hsl(30 30% 40% / 0.06), 0 10px 24px -10px hsl(30 35% 35% / 0.22);
-  --shadow-lg: 0 4px 8px hsl(30 30% 40% / 0.06), 0 16px 32px -12px hsl(30 35% 35% / 0.24);
-  --shadow-xl: 0 6px 12px hsl(30 30% 40% / 0.07), 0 24px 44px -16px hsl(30 35% 35% / 0.26);
-  --shadow-2xl: 0 30px 60px -20px hsl(30 35% 30% / 0.3);
+  /* Only things that float get a shadow: menus, toasts, taped-down notes.
+     Tinted with the ink rather than grey. */
+  --shadow-2xs: 0 1px 1px hsl(218 40% 22% / 0.05);
+  --shadow-xs: 0 1px 2px hsl(218 40% 22% / 0.06);
+  --shadow-sm: 0 1px 2px hsl(218 40% 22% / 0.07);
+  --shadow: 0 2px 6px -2px hsl(218 40% 22% / 0.12);
+  --shadow-md: 0 6px 16px -6px hsl(218 40% 22% / 0.2);
+  --shadow-lg: 0 12px 28px -10px hsl(218 40% 22% / 0.24);
+  --shadow-xl: 0 20px 40px -14px hsl(218 40% 22% / 0.26);
+  --shadow-2xl: 0 30px 60px -20px hsl(218 40% 22% / 0.3);
 }
 
-/* DARK: "Candlelit"
-   A cottage at night: walnut and plum, cream ink, rose glowing like a lamp. */
+/* DARK: "The night garden"
+   The same book read by lamplight: blue-black page, pale paper-coloured ink,
+   the flowers brighter so they still read. */
 .dark {
   color-scheme: dark;
 
-  --background: oklch(0.2 0.018 35); /* walnut */
-  --foreground: oklch(0.91 0.025 80); /* cream */
-  --card: oklch(0.245 0.022 35);
-  --card-foreground: oklch(0.91 0.025 80);
-  --popover: oklch(0.255 0.022 35);
-  --popover-foreground: oklch(0.91 0.025 80);
+  --background: oklch(0.241 0.033 256); /* night page      #15202F */
+  --foreground: oklch(0.925 0.017 122); /* pale paper ink  #E4E8DC */
+  --card: oklch(0.274 0.036 257); /*                        #1C2839 */
+  --card-foreground: oklch(0.925 0.017 122);
+  --popover: oklch(0.29 0.036 257);
+  --popover-foreground: oklch(0.925 0.017 122);
 
-  --primary: oklch(0.76 0.085 14); /* lamplit rose */
-  --primary-foreground: oklch(0.22 0.03 20);
+  --primary: oklch(0.768 0.096 4); /* lamplit rose        #E89AAC */
+  --primary-foreground: oklch(0.241 0.033 256);
 
-  --secondary: oklch(0.3 0.035 145);
-  --secondary-foreground: oklch(0.86 0.05 140);
+  --secondary: oklch(0.33 0.04 130);
+  --secondary-foreground: oklch(0.86 0.06 123);
 
-  --muted: oklch(0.285 0.02 40);
-  --muted-foreground: oklch(0.72 0.03 70);
+  --muted: oklch(0.3 0.03 257);
+  --muted-foreground: oklch(0.747 0.026 258); /*            #A3AEBE */
 
-  --accent: oklch(0.31 0.035 20);
-  --accent-foreground: oklch(0.92 0.03 30);
+  --accent: oklch(0.33 0.045 350);
+  --accent-foreground: oklch(0.93 0.03 10);
 
-  --destructive: oklch(0.68 0.14 28);
-  --destructive-foreground: oklch(0.2 0.02 30);
+  --destructive: oklch(0.7 0.14 25);
+  --destructive-foreground: oklch(0.241 0.033 256);
 
-  /* Brighter, so both still clear 4.5:1 against a dark field. */
-  --success: oklch(0.76 0.1 145);
-  --success-foreground: oklch(0.2 0.02 145);
-  --warning: oklch(0.84 0.11 85);
-  --warning-foreground: oklch(0.22 0.03 70);
+  --success: oklch(0.765 0.075 123); /* olive leaf         #A9BB86 */
+  --success-foreground: oklch(0.241 0.033 256);
+  --warning: oklch(0.82 0.117 85); /* marigold            #E7BE66 */
+  --warning-foreground: oklch(0.241 0.033 256);
 
-  --border: oklch(0.91 0.025 80 / 14%);
-  --input: oklch(0.91 0.025 80 / 18%);
-  --ring: oklch(0.76 0.085 14);
+  --border: oklch(0.925 0.017 122 / 13%);
+  --input: oklch(0.925 0.017 122 / 20%);
+  --ring: oklch(0.768 0.096 4);
 
-  --chart-1: oklch(0.74 0.09 12);
-  --chart-2: oklch(0.72 0.075 145);
-  --chart-3: oklch(0.7 0.07 245);
-  --chart-4: oklch(0.8 0.1 82);
-  --chart-5: oklch(0.72 0.08 305);
+  --chart-1: oklch(0.768 0.096 4);
+  --chart-2: oklch(0.765 0.075 123);
+  --chart-3: oklch(0.741 0.07 262);
+  --chart-4: oklch(0.82 0.117 85);
+  --chart-5: oklch(0.75 0.073 308);
 
-  --sidebar: oklch(0.22 0.02 35);
-  --sidebar-foreground: oklch(0.91 0.025 80);
-  --sidebar-primary: oklch(0.76 0.085 14);
-  --sidebar-primary-foreground: oklch(0.22 0.03 20);
-  --sidebar-accent: oklch(0.31 0.035 20);
-  --sidebar-accent-foreground: oklch(0.92 0.03 30);
-  --sidebar-border: oklch(0.91 0.025 80 / 12%);
-  --sidebar-ring: oklch(0.76 0.085 14);
+  --sidebar: oklch(0.274 0.036 257);
+  --sidebar-foreground: oklch(0.925 0.017 122);
+  --sidebar-primary: oklch(0.768 0.096 4);
+  --sidebar-primary-foreground: oklch(0.241 0.033 256);
+  --sidebar-accent: oklch(0.33 0.045 350);
+  --sidebar-accent-foreground: oklch(0.93 0.03 10);
+  --sidebar-border: oklch(0.925 0.017 122 / 12%);
+  --sidebar-ring: oklch(0.768 0.096 4);
 
-  --shadow-sm: 0 1px 2px hsl(20 40% 3% / 0.3), 0 4px 14px -6px hsl(20 40% 3% / 0.45);
-  --shadow: 0 1px 2px hsl(20 40% 3% / 0.3), 0 6px 18px -8px hsl(20 40% 3% / 0.5);
-  --shadow-md: 0 2px 4px hsl(20 40% 3% / 0.3), 0 10px 24px -10px hsl(20 40% 3% / 0.55);
-  --shadow-lg: 0 4px 8px hsl(20 40% 3% / 0.3), 0 16px 32px -12px hsl(20 40% 3% / 0.6);
+  --shadow-sm: 0 1px 2px hsl(220 50% 5% / 0.4);
+  --shadow: 0 2px 6px -2px hsl(220 50% 5% / 0.5);
+  --shadow-md: 0 6px 16px -6px hsl(220 50% 5% / 0.6);
+  --shadow-lg: 0 12px 28px -10px hsl(220 50% 5% / 0.65);
 }
 
 @theme inline {
@@ -186,9 +189,11 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
-  --font-hand: var(--font-hand);
 
   --text-tiny: 0.625rem;
+  /* Alegreya Sans runs small: 12px is too little for times and dates. */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.35;
 
   /* Derived from --radius (0.5rem) as 4/6/8/12px. The multiplier form these
      replace produced NEGATIVE lengths for sm and md, which CSS rejects, so
@@ -213,6 +218,11 @@
    light mode — unless it also named `border-border`. The theme owns the
    border colour, so set it once here rather than on every element. */
 @layer base {
+  /* Alegreya Sans has a small x-height; 17px reads like everyone else's 16. */
+  html {
+    font-size: 106.25%;
+  }
+
   *,
   ::after,
   ::before,
@@ -236,15 +246,15 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-color: var(--primary);
-  opacity: 0.07;
+  background-color: var(--chart-2);
+  opacity: 0.09;
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill='%23000'%3E%3Cg transform='translate(40 48)'%3E%3Ccircle cx='0' cy='-7' r='5'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5'/%3E%3Ccircle cx='4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5'/%3E%3C/g%3E%3Cg transform='translate(190 120) scale(.7)'%3E%3Ccircle cx='0' cy='-7' r='5'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5'/%3E%3Ccircle cx='4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5'/%3E%3C/g%3E%3Cg transform='translate(96 206) scale(.85)'%3E%3Ccircle cx='0' cy='-7' r='5'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5'/%3E%3Ccircle cx='4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5'/%3E%3C/g%3E%3Cpath d='M60 60c14 6 22 18 22 32-12-4-20-14-22-32zM205 132c-4 12-14 18-26 18 4-10 13-17 26-18zM112 214c10-8 22-8 32 0-10 7-22 7-32 0z'/%3E%3Ccircle cx='150' cy='40' r='2'/%3E%3Ccircle cx='230' cy='220' r='2.5'/%3E%3Ccircle cx='20' cy='160' r='2'/%3E%3Ccircle cx='130' cy='130' r='1.6'/%3E%3C/g%3E%3C/svg%3E");
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill='%23000'%3E%3Cg transform='translate(40 48)'%3E%3Ccircle cx='0' cy='-7' r='5'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5'/%3E%3Ccircle cx='4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5'/%3E%3C/g%3E%3Cg transform='translate(190 120) scale(.7)'%3E%3Ccircle cx='0' cy='-7' r='5'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5'/%3E%3Ccircle cx='4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5'/%3E%3C/g%3E%3Cg transform='translate(96 206) scale(.85)'%3E%3Ccircle cx='0' cy='-7' r='5'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5'/%3E%3Ccircle cx='4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5'/%3E%3C/g%3E%3Cpath d='M60 60c14 6 22 18 22 32-12-4-20-14-22-32zM205 132c-4 12-14 18-26 18 4-10 13-17 26-18zM112 214c10-8 22-8 32 0-10 7-22 7-32 0z'/%3E%3Ccircle cx='150' cy='40' r='2'/%3E%3Ccircle cx='230' cy='220' r='2.5'/%3E%3Ccircle cx='20' cy='160' r='2'/%3E%3Ccircle cx='130' cy='130' r='1.6'/%3E%3C/g%3E%3C/svg%3E");
   -webkit-mask-size: 260px 260px;
   mask-size: 260px 260px;
 }
 .dark body::before {
-  opacity: 0.05;
+  opacity: 0.06;
 }
 
 /* A scalloped hem under the header, like the edge of a lace doily. */
@@ -316,23 +326,44 @@ body::before {
   );
 }
 
-/* Stitched edge: a dashed thread just inside a card's border. */
-.stitched {
-  position: relative;
-}
-.stitched::before {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  border: 1.5px dashed color-mix(in oklch, var(--border) 85%, var(--foreground) 15%);
-  border-radius: calc(var(--radius) + 2px);
-  pointer-events: none;
+/* Titles: Yeseva is a display face, so it gets a little air and no fake bold. */
+.font-serif {
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: -0.005em;
 }
 
-/* Headings in the soft vintage serif, with its optical sizing. */
-.font-serif {
-  font-optical-sizing: auto;
-  font-variation-settings: "SOFT" 100;
+/* The one unprompted motion in the app: the bouquet on Today draws itself in.
+   Stems are stroked paths; flowers and leaves bloom after. Skipped entirely
+   under reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .bouquet .stem {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: bouquet-draw 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  .bouquet .bloom {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: bouquet-bloom 0.7s cubic-bezier(0.2, 0.8, 0.2, 1.2) forwards;
+    animation-delay: calc(0.9s + var(--i, 0) * 0.08s);
+  }
+}
+@keyframes bouquet-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes bouquet-bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.4) rotate(-20deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
 }
 
 /* Container for scrolling text */

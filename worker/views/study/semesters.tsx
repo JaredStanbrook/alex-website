@@ -56,7 +56,7 @@ export const SemesterPage = ({
 }: SemesterPageProps) => {
   if (!selected) {
     return (
-      <Page title="Subjects" eyebrow="Your semesters" eyebrowIcon="book-open">
+      <Page title="Subjects">
         <EmptyState
           icon="sprout"
           title="Let's set up your first semester"
@@ -76,12 +76,11 @@ export const SemesterPage = ({
   return (
     <Page
       title={selected.name}
-      eyebrow={selected.id === currentId ? "Current semester" : "Semester"}
-      eyebrowIcon="book-open"
       subtitle={
         <>
-          {formatDate(selected.startDate, locale)} – {formatDate(selected.endDate, locale)}
-          {progress ? ` · week ${progress.week} of ${progress.total}` : ""}
+          {selected.id === currentId ? "Your current semester, " : ""}
+          {formatDate(selected.startDate, locale)} to {formatDate(selected.endDate, locale)}
+          {progress ? `, now in week ${progress.week} of ${progress.total}` : ""}
         </>
       }
       actions={
@@ -184,23 +183,19 @@ export const SemesterPage = ({
               return (
                 <a
                   href={`/subjects/${s.id}`}
-                  class={`${CARD} group relative block overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md`}
+                  class={`${CARD} group relative block overflow-hidden`}
                 >
-                  {/* A pressed flower in the subject's colour, peeking in. */}
+                  {/* A pressed flower in the subject's colour, peeking in. It is
+                      the subject's colour marker, so there is no side bar too. */}
                   <Blossom
-                    class="pointer-events-none absolute -right-3 -top-3 h-16 w-16 rotate-12 opacity-70 transition-transform duration-500 group-hover:rotate-45"
+                    class="pointer-events-none absolute -right-3 -top-3 h-16 w-16 rotate-12 opacity-70"
                     petal={colour.fill}
                   />
-                  <div class={`absolute inset-y-5 left-0 w-1 rounded-r-full ${colour.bar}`}></div>
-                  <div class="space-y-3 p-5 pl-6">
+                  <div class="space-y-3 p-5">
                     <div class="flex items-start justify-between gap-2 pr-9">
                       <div class="min-w-0">
-                        {s.code ? (
-                          <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                            {s.code}
-                          </p>
-                        ) : null}
-                        <h3 class="font-serif text-xl font-medium leading-snug">{s.name}</h3>
+                        {s.code ? <p class="text-sm text-muted-foreground">{s.code}</p> : null}
+                        <h3 class="font-serif text-[1.35rem] leading-snug">{s.name}</h3>
                       </div>
                       {result.percent !== null ? (
                         <Badge tone="success">
@@ -213,7 +208,7 @@ export const SemesterPage = ({
                         <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
                         {open.length === 0
                           ? "Nothing due"
-                          : `${open[0].title} · ${formatDay(open[0].dueDate, locale)}`}
+                          : `${open[0].title}, due ${formatDay(open[0].dueDate, locale)}`}
                       </li>
                       <li class="flex items-center gap-2">
                         <i data-lucide="graduation-cap" class="h-3.5 w-3.5"></i>

@@ -59,15 +59,12 @@ export const NoteCard = ({
   targets?: TargetLabel[];
   locale: string;
 }) => (
-  <article
-    id={`note-${note.id}`}
-    class={`${CARD} relative mt-3 flex flex-col transition-all hover:-translate-y-0.5 hover:rotate-[0.4deg] hover:shadow-md`}
-  >
+  <article id={`note-${note.id}`} class={`${CARD} relative mt-3 flex flex-col`}>
     {/* A strip of washi tape in the note's colour holds it to the page. */}
     <span aria-hidden="true" class={`washi ${accentOf(note).bar}`}></span>
     <div class="flex flex-1 flex-col gap-2 p-5 pt-6">
       <div class="flex items-start justify-between gap-2">
-        <h3 class="min-w-0 font-serif text-lg font-medium leading-snug line-clamp-2">
+        <h3 class="min-w-0 font-serif text-[1.35rem] leading-snug line-clamp-2">
           <a href={`/notes/${note.id}`} class="after:absolute after:inset-0 hover:text-primary">
             {note.title}
           </a>
@@ -142,12 +139,10 @@ export const NoteGrid = ({ notes, targets, locale, query, pinnedOnly }: NoteList
 export const NoteListPage = (props: NoteListProps & { total: number; pinnedCount: number }) => (
   <Page
     title="Notes"
-    eyebrow="Your notebook"
-    eyebrowIcon="notebook-pen"
     subtitle={
       props.total === 0
         ? "Nothing written yet."
-        : `${props.total} note${props.total === 1 ? "" : "s"}${props.pinnedCount ? ` · ${props.pinnedCount} pinned` : ""}`
+        : `${props.total} note${props.total === 1 ? "" : "s"}${props.pinnedCount ? `, ${props.pinnedCount} pinned to the top` : ""}.`
     }
     actions={
       <a href="/notes/new" class={BTN_PRIMARY}>

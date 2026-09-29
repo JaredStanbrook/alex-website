@@ -33,8 +33,6 @@ export const ExamListPage = ({ exams, subjects, material, today, locale, hasSubj
   return (
     <Page
       title="Exams"
-      eyebrow="Revision"
-      eyebrowIcon="graduation-cap"
       subtitle={
         next
           ? `Next up: ${next.title}, ${daysUntil(next.date, today) === 0 ? "today — good luck!" : `in ${daysUntil(next.date, today)} day${daysUntil(next.date, today) === 1 ? "" : "s"}`}`

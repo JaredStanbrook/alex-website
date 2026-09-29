@@ -7,6 +7,8 @@
 // Colour classes are written out whole — Tailwind only generates class names
 // it can find complete in the source.
 
+import type { Child } from "hono/jsx";
+
 const PETAL_ANGLES = [0, 72, 144, 216, 288];
 
 type Fill =
@@ -177,4 +179,170 @@ export const FloralRule = ({ class: cls = "" }: { class?: string }) => (
     </svg>
     <span class="h-px flex-1 bg-current"></span>
   </div>
+);
+
+// ==========================================
+// THE BOUQUET
+// ==========================================
+//
+// The one memorable thing in the app (docs/design.md): a small hand-tied
+// bouquet on the Today page — rose, marigold daisy, cornflower, heather and a
+// bud. Stems carry `pathLength="1"` so CSS can draw them in; flowers and
+// leaves carry `bloom` and a stagger index. All of it is skipped under
+// prefers-reduced-motion (see index.css).
+
+const bloom = (i: number) => `--i:${i}`;
+
+/**
+ * Position and animation live on separate elements on purpose: the bloom
+ * animation sets CSS `transform`, which would replace an SVG `transform`
+ * attribute on the same element and send the flower to the origin.
+ */
+const Placed = ({ at, i, children }: { at: string; i: number; children?: Child }) => (
+  <g transform={at}>
+    <g class="bloom" style={bloom(i)}>
+      {children}
+    </g>
+  </g>
+);
+
+const Leaf = ({
+  x,
+  y,
+  r,
+  s = 1,
+  i,
+}: {
+  x: number;
+  y: number;
+  r: number;
+  s?: number;
+  i: number;
+}) => (
+  <Placed at={`translate(${x} ${y}) rotate(${r}) scale(${s})`} i={i}>
+    <path d={leaf} class="fill-chart-2" />
+  </Placed>
+);
+
+export const Bouquet = ({ class: cls = "h-72 w-60" }: { class?: string }) => (
+  <svg
+    viewBox="0 0 260 300"
+    class={`bouquet ${cls}`}
+    aria-hidden="true"
+    focusable="false"
+    fill="none"
+  >
+    {/* Stems, gathered at the tie. */}
+    <g class="stroke-chart-2" stroke-width="2.4" stroke-linecap="round">
+      <path class="stem" pathLength="1" d="M130 282C128 220 126 150 130 84" />
+      <path class="stem" pathLength="1" d="M130 282C120 220 96 162 74 122" />
+      <path class="stem" pathLength="1" d="M130 282C140 220 168 162 190 118" />
+      <path class="stem" pathLength="1" d="M130 282C110 240 72 212 44 180" />
+      <path class="stem" pathLength="1" d="M130 282C150 246 194 218 220 186" />
+    </g>
+
+    {/* Leaves along the stems. */}
+    <Leaf x={127} y={190} r={-150} s={1.3} i={0} />
+    <Leaf x={129} y={150} r={-30} s={1.2} i={1} />
+    <Leaf x={104} y={196} r={-120} s={1.1} i={2} />
+    <Leaf x={156} y={194} r={-60} s={1.1} i={3} />
+    <Leaf x={86} y={222} r={-160} s={1} i={4} />
+    <Leaf x={178} y={228} r={-20} s={1} i={5} />
+
+    {/* Heather: a spray of tiny bells up the far-left stem. */}
+    <g class="bloom fill-chart-5" style={bloom(6)}>
+      {[
+        [44, 176, 4.2],
+        [52, 170, 3.6],
+        [40, 166, 3.4],
+        [50, 160, 3],
+        [58, 184, 3.4],
+        [36, 184, 3],
+        [46, 152, 2.6],
+      ].map(([cx, cy, r]) => (
+        <circle cx={cx} cy={cy} r={r} />
+      ))}
+    </g>
+
+    {/* Marigold daisy. */}
+    <Placed at="translate(72 116)" i={7}>
+      {Array.from({ length: 12 }, (_, k) => (
+        <ellipse
+          cx="0"
+          cy="-15"
+          rx="4.2"
+          ry="11"
+          transform={`rotate(${k * 30})`}
+          class="fill-chart-4"
+        />
+      ))}
+      <circle r="7.5" class="fill-chart-2" />
+    </Placed>
+
+    {/* Cornflower: ragged, star-like petals. */}
+    <Placed at="translate(192 112)" i={8}>
+      {Array.from({ length: 9 }, (_, k) => (
+        <path
+          d="M-5 -6L0 -22 5 -6Z M-3 -18l-4 -4M3 -18l4 -4"
+          transform={`rotate(${k * 40})`}
+          class="fill-chart-3 stroke-chart-3"
+          stroke-width="1.5"
+          stroke-linecap="round"
+        />
+      ))}
+      <circle r="6" class="fill-chart-5" />
+    </Placed>
+
+    {/* A bud, still closed. */}
+    <Placed at="translate(222 182) rotate(35)" i={9}>
+      <path d="M0 -14C8 -8 8 4 0 8 -8 4 -8 -8 0 -14Z" class="fill-chart-1" />
+      <path
+        d="M-6 4C-4 10 4 10 6 4"
+        class="stroke-chart-2"
+        stroke-width="2.5"
+        stroke-linecap="round"
+      />
+    </Placed>
+
+    {/* The rose: layered petals, with the page colour drawing the folds. */}
+    <Placed at="translate(130 76)" i={10}>
+      {[0, 60, 120, 180, 240, 300].map((a) => (
+        <ellipse
+          cx="0"
+          cy="-14"
+          rx="13"
+          ry="15"
+          transform={`rotate(${a})`}
+          class="fill-chart-1"
+          opacity="0.75"
+        />
+      ))}
+      <circle r="17" class="fill-chart-1" />
+      <path
+        d="M-9 2C-9 -8 3 -12 8 -4 12 2 6 10 -1 8 -7 6 -6 -2 0 -3 4 -3 4 2 1 3"
+        class="stroke-background"
+        stroke-width="2.2"
+        stroke-linecap="round"
+      />
+      <path
+        d="M-15 6C-10 16 10 17 15 7"
+        class="stroke-background"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+    </Placed>
+
+    {/* A ribbon tying it together. */}
+    <Placed at="translate(130 252)" i={11}>
+      <path d="M0 0C-14 -14 -30 -10 -26 0 -22 10 -10 6 0 0Z" class="fill-primary" />
+      <path d="M0 0C14 -14 30 -10 26 0 22 10 10 6 0 0Z" class="fill-primary" />
+      <path
+        d="M-2 2L-14 26M2 2L12 28"
+        class="stroke-primary"
+        stroke-width="4"
+        stroke-linecap="round"
+      />
+      <circle r="4.5" class="fill-primary" />
+    </Placed>
+  </svg>
 );

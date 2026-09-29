@@ -78,8 +78,6 @@ export const ResourceListPage = ({
 }) => (
   <Page
     title="Resources"
-    eyebrow="Your bookshelf"
-    eyebrowIcon="library"
     subtitle={
       resources.length
         ? `${resources.length} saved link${resources.length === 1 ? "" : "s"}`

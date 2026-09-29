@@ -11,17 +11,17 @@ import type { Child } from "hono/jsx";
 
 import type { SubjectColour } from "@server/schema/subject.schema";
 import type { LinkOptionGroup, Material, TargetLabel } from "@server/services/links.service";
-import { Blossom, FloralRule, Sprig, Wreath } from "./florals";
+import { Wreath } from "./florals";
 
 // ==========================================
 // CLASS STRINGS
 // ==========================================
 
 const BTN =
-  "inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50";
+  "inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full px-5 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50";
 
-export const BTN_PRIMARY = `${BTN} bg-primary text-primary-foreground shadow-sm hover:-translate-y-px hover:bg-primary/90 hover:shadow-md`;
-export const BTN_OUTLINE = `${BTN} border border-input bg-card/80 hover:bg-accent hover:text-accent-foreground`;
+export const BTN_PRIMARY = `${BTN} bg-primary text-primary-foreground hover:bg-primary/90`;
+export const BTN_OUTLINE = `${BTN} border border-input bg-card hover:bg-accent hover:text-accent-foreground`;
 export const BTN_GHOST = `${BTN} text-muted-foreground hover:bg-accent hover:text-accent-foreground`;
 export const BTN_DANGER = `${BTN} border border-destructive/30 text-destructive hover:bg-destructive/10`;
 
@@ -37,7 +37,8 @@ export const TEXTAREA =
   "flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm leading-relaxed placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring";
 export const SELECT = INPUT;
 
-export const CARD = "rounded-[1.4rem] border bg-card text-card-foreground shadow-sm";
+/** A sheet of paper on the page: a hairline and a small radius, no shadow. */
+export const CARD = "rounded-lg border bg-card text-card-foreground";
 
 // ==========================================
 // SUBJECT COLOURS
@@ -106,8 +107,6 @@ export const Dot = ({ colour, class: extra = "" }: { colour: string; class?: str
 
 interface PageProps {
   title: string;
-  eyebrow?: string;
-  eyebrowIcon?: string;
   subtitle?: Child;
   actions?: Child;
   back?: { href: string; label: string };
@@ -115,46 +114,32 @@ interface PageProps {
   children?: Child;
 }
 
-export const Page = ({
-  title,
-  eyebrow,
-  subtitle,
-  actions,
-  back,
-  width = "wide",
-  children,
-}: PageProps) => (
+/**
+ * Every page opens the same way: the title flush left in the display face,
+ * one plain sentence under it, actions to the right. No label above the
+ * title and no divider under it — whitespace does that job.
+ */
+export const Page = ({ title, subtitle, actions, back, width = "wide", children }: PageProps) => (
   <div
-    class={`mx-auto w-full ${width === "narrow" ? "max-w-2xl" : "max-w-5xl"} space-y-7 px-4 pb-20 pt-9 sm:px-6 sm:pt-12 animate-in fade-in duration-500`}
+    class={`mx-auto w-full ${width === "narrow" ? "max-w-2xl" : "max-w-5xl"} space-y-8 px-4 pb-20 pt-8 sm:px-6 sm:pt-12`}
   >
-    <header class="relative space-y-4">
-      {/* A sprig tucked into the corner of every page, like a pressed flower
-          in a notebook. Decoration only, and hidden where space is tight. */}
-      <Sprig class="pointer-events-none absolute -top-4 right-0 hidden h-16 w-32 -scale-x-100 opacity-80 md:block" />
-      <div class="flex flex-wrap items-end justify-between gap-4">
-        <div class="min-w-0 space-y-1">
-          {back ? (
-            <a
-              href={back.href}
-              class="-ml-2 inline-flex h-11 items-center gap-1.5 rounded-full px-3 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            >
-              <i data-lucide="arrow-left" class="h-4 w-4"></i>
-              {back.label}
-            </a>
-          ) : eyebrow ? (
-            <p class="flex items-center gap-1.5 font-hand text-2xl leading-none text-primary">
-              <Blossom class="h-4 w-4" />
-              {eyebrow}
-            </p>
-          ) : null}
-          <h1 class="font-serif text-4xl font-medium tracking-tight text-balance sm:text-5xl">
-            {title}
-          </h1>
-          {subtitle ? <p class="pt-1 text-[0.95rem] text-muted-foreground">{subtitle}</p> : null}
+    <header class="space-y-1">
+      {back ? (
+        <a
+          href={back.href}
+          class="-ml-3 inline-flex h-11 items-center gap-1.5 rounded-full px-3 text-[0.95rem] text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+        >
+          <i data-lucide="arrow-left" class="h-4 w-4"></i>
+          {back.label}
+        </a>
+      ) : null}
+      <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+        <div class="min-w-0 max-w-2xl space-y-2">
+          <h1 class="font-serif text-4xl leading-[1.1] text-balance sm:text-5xl">{title}</h1>
+          {subtitle ? <p class="text-lg leading-snug text-muted-foreground">{subtitle}</p> : null}
         </div>
         {actions ? <div class="flex flex-wrap items-center gap-2">{actions}</div> : null}
       </div>
-      <FloralRule />
     </header>
     {children}
   </div>
@@ -162,31 +147,29 @@ export const Page = ({
 
 export const Section = ({
   title,
-  icon,
   action,
   children,
 }: {
   title: string;
+  /** Accepted for older call sites; section titles no longer carry an icon. */
   icon?: string;
   action?: Child;
   children?: Child;
 }) => (
   <section class="space-y-3">
-    <div class="flex items-center justify-between gap-3">
-      <h2 class="flex items-center gap-2.5 font-serif text-xl font-medium tracking-tight">
-        {icon ? (
-          <span class="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
-            <i data-lucide={icon} class="h-4 w-4"></i>
-          </span>
-        ) : null}
-        {title}
-      </h2>
+    <div class="flex items-baseline justify-between gap-3 border-b pb-2">
+      <h2 class="font-serif text-2xl">{title}</h2>
       {action}
     </div>
     {children}
   </section>
 );
 
+/**
+ * An empty page is an invitation to act: say what goes here and offer the
+ * button that puts it there. The wreath is one of the few places a flower
+ * appears outside Today, because an empty page is a moment worth marking.
+ */
 export const EmptyState = ({
   icon,
   title,
@@ -199,22 +182,27 @@ export const EmptyState = ({
   body?: Child;
   action?: Child;
   compact?: boolean;
-}) => (
-  <div
-    class={`stitched flex flex-col items-center justify-center gap-2 rounded-[1.4rem] border bg-card/70 text-center ${compact ? "px-5 py-7" : "px-6 py-14"}`}
-  >
-    <div class={`relative flex items-center justify-center ${compact ? "h-16 w-16" : "h-24 w-24"}`}>
-      <Wreath class="absolute inset-0 h-full w-full" />
-      <i
-        data-lucide={icon}
-        class={`${compact ? "h-5 w-5" : "h-7 w-7"} relative -mt-1 text-primary`}
-      ></i>
+}) =>
+  compact ? (
+    <div class="flex items-start gap-3 rounded-lg border border-dashed px-4 py-4">
+      <i data-lucide={icon} class="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground"></i>
+      <div class="space-y-0.5">
+        <p class="font-bold">{title}</p>
+        {body ? <p class="text-[0.95rem] text-muted-foreground">{body}</p> : null}
+        {action ? <div class="pt-2">{action}</div> : null}
+      </div>
     </div>
-    <p class={`font-serif font-medium ${compact ? "text-lg" : "text-2xl"}`}>{title}</p>
-    {body ? <p class="max-w-sm text-sm text-muted-foreground">{body}</p> : null}
-    {action ? <div class="pt-2">{action}</div> : null}
-  </div>
-);
+  ) : (
+    <div class="flex flex-col items-center gap-2 rounded-lg border bg-card px-6 py-14 text-center">
+      <div class="relative flex h-24 w-24 items-center justify-center">
+        <Wreath class="absolute inset-0 h-full w-full" />
+        <i data-lucide={icon} class="relative -mt-1 h-7 w-7 text-primary"></i>
+      </div>
+      <p class="font-serif text-2xl">{title}</p>
+      {body ? <p class="max-w-sm text-[0.95rem] text-muted-foreground">{body}</p> : null}
+      {action ? <div class="pt-3">{action}</div> : null}
+    </div>
+  );
 
 // ==========================================
 // BADGES
@@ -512,7 +500,7 @@ export const LinkPicker = ({
                 <summary class="flex min-h-11 cursor-pointer list-none items-center gap-2 px-3 text-sm [&::-webkit-details-marker]:hidden">
                   <Dot colour={g.subject.colour} />
                   <span class="min-w-0 flex-1 truncate font-medium">
-                    {g.subject.code ? `${g.subject.code} · ` : ""}
+                    {g.subject.code ? `${g.subject.code}: ` : ""}
                     {g.subject.name}
                   </span>
                   <span class="hidden text-xs text-muted-foreground sm:inline">
@@ -597,7 +585,7 @@ export const ProgressBar = ({
   const pct = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0;
   return (
     <div
-      class="relative h-2.5 w-full rounded-full bg-muted"
+      class="h-2 w-full overflow-hidden rounded-full bg-muted"
       role="progressbar"
       aria-label={label}
       aria-valuemin="0"
@@ -605,11 +593,8 @@ export const ProgressBar = ({
       aria-valuenow={String(value)}
     >
       {/* Width from an inline style: a percentage per render is exactly the
-          interpolated class Tailwind would never generate. The vine grows a
-          flower at its tip. */}
-      <div class="relative h-full rounded-full bg-chart-2 transition-all" style={`width: ${pct}%`}>
-        {pct > 0 ? <Blossom class="absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2" /> : null}
-      </div>
+          interpolated class Tailwind would never generate. */}
+      <div class="h-full rounded-full bg-success" style={`width: ${pct}%`}></div>
     </div>
   );
 };

@@ -52,8 +52,6 @@ export const FlashcardSetListPage = ({
 }) => (
   <Page
     title="Flashcards"
-    eyebrow="Revision"
-    eyebrowIcon="layers"
     subtitle={
       sets.length
         ? "Pick a set and flip through a few."
@@ -93,7 +91,7 @@ export const FlashcardSetListPage = ({
                 <PublicPill isPublic={set.isPublic} />
               </div>
               <div class="min-w-0">
-                <h3 class="font-serif text-lg font-semibold leading-snug">
+                <h3 class="font-serif text-[1.35rem] leading-snug">
                   <a href={`/flashcards/${set.id}`} class="hover:text-primary">
                     {set.title}
                   </a>
@@ -236,7 +234,8 @@ export const FlashcardSetPage = ({
       {cards.length ? (
         <div class={`${CARD} flex flex-wrap items-center justify-between gap-3 p-4`}>
           <p class="text-sm text-muted-foreground">
-            {cards.length} card{cards.length === 1 ? "" : "s"} · {cards.length - learning} known
+            {cards.length} card{cards.length === 1 ? "" : "s"}, {cards.length - learning} of them
+            known.
           </p>
           <div class="flex flex-wrap gap-2">
             <a href={`/flashcards/${set.id}/study`} class={BTN_PRIMARY}>
@@ -411,7 +410,7 @@ export const StudyStage = ({ step, mode, base, owner = false }: StudyProps) => {
           <div class="flex h-14 w-14 items-center justify-center rounded-full bg-success/15 text-success">
             <i data-lucide={total ? "party-popper" : "sparkles"} class="h-7 w-7"></i>
           </div>
-          <p class="font-serif text-2xl font-semibold">
+          <p class="font-serif text-2xl">
             {total
               ? "That's the lot!"
               : mode === "learning"
@@ -437,7 +436,7 @@ export const StudyStage = ({ step, mode, base, owner = false }: StudyProps) => {
               </a>
             ) : null}
             <a href={owner ? base : "/public"} class={BTN_OUTLINE}>
-              {owner ? "Back to the set" : "More shared stuff"}
+              {owner ? "Back to the set" : "More shared notes"}
             </a>
           </div>
         </div>
@@ -469,7 +468,7 @@ export const StudyStage = ({ step, mode, base, owner = false }: StudyProps) => {
             <i data-lucide="eye" class="h-4 w-4"></i> Show answer
           </summary>
           <div class="space-y-5 bg-secondary/40 p-6 text-center">
-            <p class="font-hand text-3xl leading-snug whitespace-pre-line break-words sm:text-4xl">
+            <p class="font-serif text-2xl leading-snug whitespace-pre-line break-words sm:text-3xl">
               {card.back}
             </p>
             {owner ? (
@@ -497,7 +496,7 @@ export const StudyStage = ({ step, mode, base, owner = false }: StudyProps) => {
               </div>
             ) : (
               <a href={`${base}/study?after=${card.position}`} class={`${BTN_PRIMARY} w-full`}>
-                Next card <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                Next card
               </a>
             )}
           </div>
@@ -521,7 +520,7 @@ export const StudyPage = ({ set, ...props }: StudyProps & { set: SelectFlashcard
     title={set.title}
     back={{
       href: props.owner ? props.base : "/public",
-      label: props.owner ? "Back to the set" : "Shared stuff",
+      label: props.owner ? "Back to the set" : "Shared notes",
     }}
     width="narrow"
     subtitle={props.owner ? "Answer in your head, then check." : "Flip through at your own pace."}
